@@ -8,4 +8,31 @@
 
 body {
   margin: 0;
+  background: #fafaf9;
+  color: #09090b;
+  font-family:
+    Arial,
+    "Microsoft YaHei",
+    "PingFang SC",
+    sans-serif;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
+}
+
+::selection {
+  background: #99f6e4;
+  color: #042f2e;
 }
