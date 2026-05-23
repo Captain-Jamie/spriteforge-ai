@@ -6,6 +6,8 @@ import type { AssetRecord } from "@/lib/asset-schema";
 
 type AssetGalleryProps = {
   assets?: AssetRecord[];
+  focusedAssetId?: string | null;
+  onFocusAsset: (assetId: string) => void;
   onClearAssets: () => void;
   onRemoveAsset: (assetId: string) => void;
   onToggleSelectAsset: (assetId: string) => void;
@@ -14,6 +16,8 @@ type AssetGalleryProps = {
 
 export function AssetGallery({
   assets = [],
+  focusedAssetId,
+  onFocusAsset,
   onClearAssets,
   onRemoveAsset,
   onToggleSelectAsset,
@@ -65,7 +69,9 @@ export function AssetGallery({
             <AssetCard
               key={asset.id}
               asset={asset}
+              isFocused={focusedAssetId === asset.id}
               isSelected={selectedAssetIds.includes(asset.id)}
+              onFocus={() => onFocusAsset(asset.id)}
               onRemove={() => onRemoveAsset(asset.id)}
               onToggleSelect={() => onToggleSelectAsset(asset.id)}
             />

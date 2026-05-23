@@ -4,12 +4,18 @@ import { useState } from "react";
 import { AppHeader } from "@/components/AppHeader";
 import { AssetForm } from "@/components/AssetForm";
 import { AssetGallery } from "@/components/AssetGallery";
+import { CurrentPreview } from "@/components/CurrentPreview";
 import { ExportPanel } from "@/components/ExportPanel";
 import { PromptPreview } from "@/components/PromptPreview";
 import { StyleProfilePanel } from "@/components/StyleProfilePanel";
 import { useAssets } from "@/hooks/use-assets";
 import { useStyleProfile } from "@/hooks/use-style-profile";
-import type { GenerateApiResponse, GenerateAssetRequest, PromptBuildResult } from "@/lib/asset-schema";
+import type {
+  AssetRecord,
+  GenerateApiResponse,
+  GenerateAssetRequest,
+  PromptBuildResult
+} from "@/lib/asset-schema";
 
 export default function HomePage() {
   const {
@@ -27,6 +33,8 @@ export default function HomePage() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [mode, setMode] = useState<GenerateApiResponse["mode"] | null>(null);
   const [prompt, setPrompt] = useState<PromptBuildResult | null>(null);
+  const [focusedAssetId, setFocusedAssetId] = useState<string | null>(null);
+  const focusedAsset = assets.find((asset) => asset.id === focusedAssetId) ?? assets[0] ?? null;
 
   async function handleGenerate(request: GenerateAssetRequest) {
     setError(null);
@@ -53,6 +61,7 @@ export default function HomePage() {
 
       const result = payload as GenerateApiResponse;
       addAssets(result.assets);
+      setFocusedAssetId(result.assets[0]?.id ?? null);
       setMode(result.mode);
       setPrompt(result.prompt);
     } catch (generationError) {
@@ -60,6 +69,19 @@ export default function HomePage() {
     } finally {
       setIsGenerating(false);
     }
+  }
+
+  function handleRemoveAsset(assetId: string) {
+    removeAsset(assetId);
+
+    if (focusedAssetId === assetId) {
+      setFocusedAssetId(findNextFocusedAssetId(assets, assetId));
+    }
+  }
+
+  function handleClearAssets() {
+    clearAssets();
+    setFocusedAssetId(null);
   }
 
   return (
@@ -76,13 +98,21 @@ export default function HomePage() {
           <AssetForm isGenerating={isGenerating} onSubmit={handleGenerate} />
         </aside>
         <section className="space-y-4">
+          <CurrentPreview
+            asset={focusedAsset}
+            isSelected={focusedAsset ? selectedAssetIds.includes(focusedAsset.id) : false}
+            onRemove={focusedAsset ? () => handleRemoveAsset(focusedAsset.id) : undefined}
+            onToggleSelect={focusedAsset ? () => toggleSelectAsset(focusedAsset.id) : undefined}
+          />
           <PromptPreview error={error} isGenerating={isGenerating} mode={mode} prompt={prompt} />
         </section>
         <section className="space-y-4 xl:sticky xl:top-4 xl:self-start">
           <AssetGallery
             assets={assets}
-            onClearAssets={clearAssets}
-            onRemoveAsset={removeAsset}
+            focusedAssetId={focusedAsset?.id}
+            onClearAssets={handleClearAssets}
+            onFocusAsset={setFocusedAssetId}
+            onRemoveAsset={handleRemoveAsset}
             onToggleSelectAsset={toggleSelectAsset}
             selectedAssetIds={selectedAssetIds}
           />
@@ -103,4 +133,15 @@ async function readJsonResponse(response: Response) {
 
 function readErrorMessage(payload: Record<string, unknown>, fallback: string) {
   return typeof payload.error === "string" && payload.error.trim() ? payload.error : fallback;
+}
+
+function findNextFocusedAssetId(assets: AssetRecord[], removedAssetId: string) {
+  const removedIndex = assets.findIndex((asset) => asset.id === removedAssetId);
+
+  if (removedIndex < 0) {
+    return assets[0]?.id ?? null;
+  }
+
+  const nextAsset = assets[removedIndex + 1] ?? assets[removedIndex - 1];
+  return nextAsset?.id ?? null;
 }
