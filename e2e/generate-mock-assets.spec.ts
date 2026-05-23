@@ -36,4 +36,10 @@ test("generates mock assets and prompt from the request form", async ({ page }) 
 
   await expect(page.getByText("fire_slime_monster_1")).not.toBeVisible();
   await expect(page.getByText("fire_slime_monster_2")).toBeVisible();
+
+  const downloadPromise = page.waitForEvent("download");
+  await page.getByRole("button", { name: "Export ZIP" }).click();
+  const download = await downloadPromise;
+
+  expect(download.suggestedFilename()).toBe("spriteforge-export.zip");
 });
