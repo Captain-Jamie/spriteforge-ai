@@ -1,6 +1,7 @@
-import { Check, Download, ImageIcon } from "lucide-react";
+import { Check, Clipboard, Download, ImageIcon, Trash2 } from "lucide-react";
 import type { AssetRecord } from "@/lib/asset-schema";
 import { ART_STYLE_LABELS, ASSET_TYPE_LABELS } from "@/lib/constants";
+import { buildAssetFileName, copyToClipboard, downloadUrl } from "@/lib/file-utils";
 
 const toneClasses = {
   teal: "border-teal-200 bg-teal-50 text-teal-800",
@@ -10,13 +11,28 @@ const toneClasses = {
 
 type AssetCardProps = {
   asset: AssetRecord;
+  isSelected: boolean;
+  onRemove: () => void;
+  onToggleSelect: () => void;
 };
 
-export function AssetCard({ asset }: AssetCardProps) {
+export function AssetCard({ asset, isSelected, onRemove, onToggleSelect }: AssetCardProps) {
   const tone = getTone(asset.assetType);
 
+  async function handleCopyPrompt() {
+    await copyToClipboard(asset.prompt);
+  }
+
+  function handleDownload() {
+    downloadUrl(asset.imageUrl, buildAssetFileName(asset));
+  }
+
   return (
-    <article className="overflow-hidden rounded-lg border border-zinc-200 bg-white">
+    <article
+      className={`overflow-hidden rounded-lg border bg-white ${
+        isSelected ? "border-teal-600 ring-2 ring-teal-100" : "border-zinc-200"
+      }`}
+    >
       <div className="flex aspect-square items-center justify-center bg-[linear-gradient(45deg,#f4f4f5_25%,transparent_25%),linear-gradient(-45deg,#f4f4f5_25%,transparent_25%),linear-gradient(45deg,transparent_75%,#f4f4f5_75%),linear-gradient(-45deg,transparent_75%,#f4f4f5_75%)] bg-[length:20px_20px] bg-[position:0_0,0_10px,10px_-10px,-10px_0px]">
         <div
           className={`flex h-24 w-24 items-center justify-center rounded-md border ${toneClasses[tone]}`}
@@ -37,15 +53,46 @@ export function AssetCard({ asset }: AssetCardProps) {
               {ASSET_TYPE_LABELS[asset.assetType]} · {ART_STYLE_LABELS[asset.style]} · {asset.size}
             </p>
           </div>
-          <button className="flex h-8 w-8 items-center justify-center rounded-md border border-zinc-300 text-zinc-600 hover:bg-zinc-50">
+          <button
+            aria-pressed={isSelected}
+            className={`flex h-8 w-8 items-center justify-center rounded-md border ${
+              isSelected
+                ? "border-teal-700 bg-teal-700 text-white"
+                : "border-zinc-300 text-zinc-600 hover:bg-zinc-50"
+            }`}
+            onClick={onToggleSelect}
+            type="button"
+          >
             <Check size={15} aria-hidden="true" />
             <span className="sr-only">Select asset</span>
           </button>
         </div>
-        <button className="inline-flex h-9 w-full items-center justify-center gap-2 rounded-md border border-zinc-300 text-sm font-medium text-zinc-700 hover:bg-zinc-50">
-          <Download size={15} aria-hidden="true" />
-          Download PNG
-        </button>
+        <div className="grid grid-cols-3 gap-2">
+          <button
+            className="inline-flex h-9 items-center justify-center gap-2 rounded-md border border-zinc-300 text-sm font-medium text-zinc-700 hover:bg-zinc-50"
+            onClick={handleDownload}
+            type="button"
+          >
+            <Download size={15} aria-hidden="true" />
+            <span className="sr-only sm:not-sr-only">PNG</span>
+          </button>
+          <button
+            className="inline-flex h-9 items-center justify-center gap-2 rounded-md border border-zinc-300 text-sm font-medium text-zinc-700 hover:bg-zinc-50"
+            onClick={handleCopyPrompt}
+            type="button"
+          >
+            <Clipboard size={15} aria-hidden="true" />
+            <span className="sr-only sm:not-sr-only">Prompt</span>
+          </button>
+          <button
+            className="inline-flex h-9 items-center justify-center gap-2 rounded-md border border-red-200 text-sm font-medium text-red-700 hover:bg-red-50"
+            onClick={onRemove}
+            type="button"
+          >
+            <Trash2 size={15} aria-hidden="true" />
+            <span className="sr-only sm:not-sr-only">Delete</span>
+          </button>
+        </div>
       </div>
     </article>
   );

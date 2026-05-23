@@ -7,10 +7,18 @@ import { AssetGallery } from "@/components/AssetGallery";
 import { ExportPanel } from "@/components/ExportPanel";
 import { PromptPreview } from "@/components/PromptPreview";
 import { StyleProfilePanel } from "@/components/StyleProfilePanel";
-import type { AssetRecord, GenerateApiResponse, GenerateAssetRequest, PromptBuildResult } from "@/lib/asset-schema";
+import { useAssets } from "@/hooks/use-assets";
+import type { GenerateApiResponse, GenerateAssetRequest, PromptBuildResult } from "@/lib/asset-schema";
 
 export default function HomePage() {
-  const [assets, setAssets] = useState<AssetRecord[]>([]);
+  const {
+    addAssets,
+    assets,
+    clearAssets,
+    removeAsset,
+    selectedAssetIds,
+    toggleSelectAsset
+  } = useAssets();
   const [error, setError] = useState<string | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [mode, setMode] = useState<GenerateApiResponse["mode"] | null>(null);
@@ -36,7 +44,7 @@ export default function HomePage() {
       }
 
       const result = payload as GenerateApiResponse;
-      setAssets(result.assets);
+      addAssets(result.assets);
       setMode(result.mode);
       setPrompt(result.prompt);
     } catch (generationError) {
@@ -56,7 +64,13 @@ export default function HomePage() {
           <PromptPreview error={error} isGenerating={isGenerating} mode={mode} prompt={prompt} />
         </aside>
         <section className="space-y-5">
-          <AssetGallery assets={assets} />
+          <AssetGallery
+            assets={assets}
+            onClearAssets={clearAssets}
+            onRemoveAsset={removeAsset}
+            onToggleSelectAsset={toggleSelectAsset}
+            selectedAssetIds={selectedAssetIds}
+          />
           <ExportPanel />
         </section>
       </div>
