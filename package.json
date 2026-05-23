@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "vitest"
+    "test": "vitest run"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",
