@@ -49,6 +49,18 @@ export function PromptPreview({ error, isGenerating = false, mode, prompt }: Pro
               ? "Development generation is for local work and automated tests only."
               : "Real API result returned from the configured image provider."}
           </p>
+          {prompt.appliedStyleProfile.length > 0 ? (
+            <div className="rounded-md border border-amber-200 bg-amber-50 p-3">
+              <div className="mb-2 text-xs font-semibold uppercase tracking-wide text-amber-900">
+                Applied Style Profile
+              </div>
+              <ul className="space-y-1 text-sm leading-6 text-amber-950">
+                {prompt.appliedStyleProfile.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </div>
+          ) : null}
         </div>
       ) : null}
       {!prompt && !error && !isGenerating ? (

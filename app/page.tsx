@@ -8,6 +8,7 @@ import { ExportPanel } from "@/components/ExportPanel";
 import { PromptPreview } from "@/components/PromptPreview";
 import { StyleProfilePanel } from "@/components/StyleProfilePanel";
 import { useAssets } from "@/hooks/use-assets";
+import { useStyleProfile } from "@/hooks/use-style-profile";
 import type { GenerateApiResponse, GenerateAssetRequest, PromptBuildResult } from "@/lib/asset-schema";
 
 export default function HomePage() {
@@ -20,6 +21,8 @@ export default function HomePage() {
     selectedAssetIds,
     toggleSelectAsset
   } = useAssets();
+  const { appliedStyleProfile, resetStyleProfile, styleProfile, updateStyleProfileField } =
+    useStyleProfile();
   const [error, setError] = useState<string | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [mode, setMode] = useState<GenerateApiResponse["mode"] | null>(null);
@@ -28,6 +31,10 @@ export default function HomePage() {
   async function handleGenerate(request: GenerateAssetRequest) {
     setError(null);
     setIsGenerating(true);
+    const requestWithStyleProfile: GenerateAssetRequest = {
+      ...request,
+      styleProfile
+    };
 
     try {
       const response = await fetch("/api/generate", {
@@ -35,7 +42,7 @@ export default function HomePage() {
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify(request)
+        body: JSON.stringify(requestWithStyleProfile)
       });
 
       const payload = await response.json();
@@ -60,7 +67,12 @@ export default function HomePage() {
       <AppHeader />
       <div className="mx-auto grid w-full max-w-7xl gap-5 px-4 py-5 lg:grid-cols-[390px_minmax(0,1fr)] lg:px-6">
         <aside className="space-y-5">
-          <StyleProfilePanel />
+          <StyleProfilePanel
+            appliedCount={appliedStyleProfile}
+            onReset={resetStyleProfile}
+            onUpdateField={updateStyleProfileField}
+            styleProfile={styleProfile}
+          />
           <AssetForm isGenerating={isGenerating} onSubmit={handleGenerate} />
           <PromptPreview error={error} isGenerating={isGenerating} mode={mode} prompt={prompt} />
         </aside>
@@ -72,7 +84,7 @@ export default function HomePage() {
             onToggleSelectAsset={toggleSelectAsset}
             selectedAssetIds={selectedAssetIds}
           />
-          <ExportPanel assets={assets} selectedAssets={selectedAssets} />
+          <ExportPanel assets={assets} selectedAssets={selectedAssets} styleProfile={styleProfile} />
         </section>
       </div>
     </main>
