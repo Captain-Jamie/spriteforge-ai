@@ -56,11 +56,24 @@ export const ExportPackageSchema = z.object({
   exportedAt: z.string().min(1)
 });
 
+export const GeneratedImageSchema = z.object({
+  url: z.string().min(1),
+  seed: z.string().optional()
+});
+
+export const GenerateApiResponseSchema = z.object({
+  assets: z.array(AssetRecordSchema),
+  prompt: PromptBuildResultSchema,
+  mode: z.enum(["mock", "real"])
+});
+
 export type StyleProfile = z.infer<typeof StyleProfileSchema>;
 export type GenerateAssetRequest = z.infer<typeof GenerateAssetRequestSchema>;
 export type PromptBuildResult = z.infer<typeof PromptBuildResultSchema>;
 export type AssetRecord = z.infer<typeof AssetRecordSchema>;
 export type ExportPackage = z.infer<typeof ExportPackageSchema>;
+export type GeneratedImage = z.infer<typeof GeneratedImageSchema>;
+export type GenerateApiResponse = z.infer<typeof GenerateApiResponseSchema>;
 export type AssetType = GenerateAssetRequest["assetType"];
 export type ArtStyle = GenerateAssetRequest["style"];
 export type GameGenre = GenerateAssetRequest["gameGenre"];
