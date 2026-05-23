@@ -3,8 +3,13 @@ import { setTimeout as delay } from "node:timers/promises";
 
 const port = 3000;
 const baseUrl = `http://localhost:${port}`;
+const testEnv = {
+  ...process.env,
+  MOCK_IMAGE_GENERATION: "true"
+};
 
 const server = spawn(process.execPath, ["node_modules/next/dist/bin/next", "dev", "--port", String(port)], {
+  env: testEnv,
   shell: false,
   stdio: "inherit"
 });
@@ -44,6 +49,7 @@ async function waitForServer(url) {
 function runCommand(command, args, stdio = "inherit") {
   return new Promise((resolve) => {
     const child = spawn(command, args, {
+      env: testEnv,
       shell: false,
       stdio
     });

@@ -22,24 +22,38 @@ export function PromptPreview({ error, isGenerating = false, mode, prompt }: Pro
       ) : null}
       {isGenerating ? (
         <div className="rounded-md border border-teal-200 bg-teal-50 p-4 text-sm leading-6 text-teal-900">
-          Generating mock assets and enhanced prompt...
+          Generating assets and enhanced prompt...
         </div>
       ) : null}
       {prompt && !isGenerating ? (
         <div className="space-y-3">
-          <div className="inline-flex rounded-md border border-teal-200 bg-teal-50 px-2.5 py-1 text-xs font-semibold uppercase tracking-wide text-teal-900">
+          <div
+            className={
+              mode === "mock"
+                ? "inline-flex rounded-md border border-amber-200 bg-amber-50 px-2.5 py-1 text-xs font-semibold uppercase tracking-wide text-amber-900"
+                : "inline-flex rounded-md border border-teal-200 bg-teal-50 px-2.5 py-1 text-xs font-semibold uppercase tracking-wide text-teal-900"
+            }
+          >
             {mode === "mock" ? "Mock mode" : "Real mode"}
           </div>
           <PromptBlock label="Positive" text={prompt.positivePrompt} />
           <PromptBlock label="Negative" text={prompt.negativePrompt} />
-          <p className="rounded-md bg-amber-50 px-3 py-2 text-sm text-amber-900">
-            Assets are temporary in this version. Library persistence will be added later.
+          <p
+            className={
+              mode === "mock"
+                ? "rounded-md bg-amber-50 px-3 py-2 text-sm leading-6 text-amber-900"
+                : "rounded-md bg-teal-50 px-3 py-2 text-sm leading-6 text-teal-900"
+            }
+          >
+            {mode === "mock"
+              ? "Development generation is for local work and automated tests only."
+              : "Real API result returned from the configured image provider."}
           </p>
         </div>
       ) : null}
       {!prompt && !error && !isGenerating ? (
         <div className="rounded-md border border-dashed border-zinc-300 bg-zinc-50 p-4 text-sm leading-6 text-zinc-600">
-          Submit a valid asset request to preview the generated prompt and mock assets.
+          Submit a valid asset request to preview the generated prompt and assets.
         </div>
       ) : null}
     </section>
