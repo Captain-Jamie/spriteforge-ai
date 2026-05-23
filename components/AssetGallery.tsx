@@ -26,11 +26,13 @@ export function AssetGallery({
       : assets;
 
   return (
-    <section className="rounded-lg border border-zinc-200 bg-white p-4 shadow-sm">
+    <section className="rounded-lg border border-zinc-200 bg-white p-4 shadow-sm shadow-zinc-200/70">
       <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h2 className="text-base font-semibold text-zinc-950">Asset Library</h2>
-          <p className="mt-1 text-sm text-zinc-600">Generated records and export selection</p>
+          <h2 className="text-base font-semibold text-zinc-950">素材库</h2>
+          <p className="mt-1 text-sm text-zinc-600">
+            {assets.length} 个素材，已选择 {selectedAssetIds.length} 个
+          </p>
         </div>
         <div className="flex flex-wrap gap-2">
           <button
@@ -38,14 +40,14 @@ export function AssetGallery({
             onClick={() => setViewMode("all")}
             type="button"
           >
-            All
+            全部
           </button>
           <button
             className={buttonClass(viewMode === "selected")}
             onClick={() => setViewMode("selected")}
             type="button"
           >
-            Selected ({selectedAssetIds.length})
+            已选 ({selectedAssetIds.length})
           </button>
           <button
             className="h-9 rounded-md border border-red-200 px-3 text-sm text-red-700 hover:bg-red-50 disabled:border-zinc-200 disabled:text-zinc-400 disabled:hover:bg-white"
@@ -53,12 +55,12 @@ export function AssetGallery({
             onClick={onClearAssets}
             type="button"
           >
-            Clear
+            清空
           </button>
         </div>
       </div>
       {visibleAssets.length > 0 ? (
-        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-1 2xl:grid-cols-2">
           {visibleAssets.map((asset) => (
             <AssetCard
               key={asset.id}
@@ -72,8 +74,8 @@ export function AssetGallery({
       ) : (
         <div className="rounded-md border border-dashed border-zinc-300 bg-zinc-50 p-6 text-sm leading-6 text-zinc-600">
           {viewMode === "selected"
-            ? "Selected assets will appear here after you choose them from the library."
-            : "Generated assets will appear here after submitting a valid request."}
+            ? "选择素材后，这里会显示待导出的素材。"
+            : "生成素材后，这里会显示可管理和导出的素材卡片。"}
         </div>
       )}
     </section>

@@ -63,10 +63,10 @@ export default function HomePage() {
   }
 
   return (
-    <main className="min-h-screen bg-stone-50 text-zinc-950">
+    <main className="min-h-screen bg-[#f4f5f2] text-zinc-950">
       <AppHeader />
-      <div className="mx-auto grid w-full max-w-7xl gap-5 px-4 py-5 lg:grid-cols-[390px_minmax(0,1fr)] lg:px-6">
-        <aside className="space-y-5">
+      <div className="mx-auto grid w-full max-w-[1500px] gap-4 px-4 py-4 xl:grid-cols-[360px_minmax(420px,1fr)_390px] xl:px-6">
+        <aside className="space-y-4 xl:sticky xl:top-4 xl:self-start">
           <StyleProfilePanel
             appliedCount={appliedStyleProfile}
             onReset={resetStyleProfile}
@@ -74,9 +74,11 @@ export default function HomePage() {
             styleProfile={styleProfile}
           />
           <AssetForm isGenerating={isGenerating} onSubmit={handleGenerate} />
-          <PromptPreview error={error} isGenerating={isGenerating} mode={mode} prompt={prompt} />
         </aside>
-        <section className="space-y-5">
+        <section className="space-y-4">
+          <PromptPreview error={error} isGenerating={isGenerating} mode={mode} prompt={prompt} />
+        </section>
+        <section className="space-y-4 xl:sticky xl:top-4 xl:self-start">
           <AssetGallery
             assets={assets}
             onClearAssets={clearAssets}

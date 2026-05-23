@@ -15,17 +15,17 @@ export function StyleProfilePanel({
   styleProfile
 }: StyleProfilePanelProps) {
   return (
-    <section className="rounded-lg border border-zinc-200 bg-white p-4 shadow-sm">
+    <section className="rounded-lg border border-zinc-200 bg-white p-4 shadow-sm shadow-zinc-200/70">
       <div className="mb-4 flex items-center justify-between gap-3">
         <div className="flex items-center gap-2">
           <Palette size={18} className="text-amber-700" aria-hidden="true" />
           <div>
-            <h2 className="text-base font-semibold text-zinc-950">Style Profile</h2>
-            <p className="mt-1 text-sm text-zinc-600">Saved locally and injected into prompts</p>
+            <h2 className="text-base font-semibold text-zinc-950">项目风格档案</h2>
+            <p className="mt-1 text-sm text-zinc-600">自动保存，并注入素材生成 Prompt</p>
           </div>
         </div>
         <button
-          aria-label="Reset style profile"
+          aria-label="重置风格档案"
           className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-zinc-300 text-zinc-600 transition hover:border-amber-500 hover:text-amber-700"
           onClick={onReset}
           type="button"
@@ -35,48 +35,48 @@ export function StyleProfilePanel({
       </div>
       <div className="mb-4 rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-900">
         {appliedCount > 0
-          ? `${appliedCount} style rule${appliedCount > 1 ? "s" : ""} active.`
-          : "No style rules active yet."}
+          ? `${appliedCount} 条风格规则生效`
+          : "尚未设置风格规则"}
       </div>
       <div className="grid gap-3">
         <StyleInput
           field="projectName"
-          label="Project"
+          label="项目名称"
           onUpdateField={onUpdateField}
           placeholder="Crystal Dungeon"
           value={styleProfile.projectName}
         />
         <StyleInput
           field="palette"
-          label="Palette"
+          label="配色方案"
           onUpdateField={onUpdateField}
           placeholder="cyan, violet, deep navy"
           value={styleProfile.palette}
         />
         <StyleInput
           field="lineStyle"
-          label="Line style"
+          label="线条风格"
           onUpdateField={onUpdateField}
           placeholder="thin bright outline"
           value={styleProfile.lineStyle}
         />
         <StyleInput
           field="lighting"
-          label="Lighting"
+          label="光照规则"
           onUpdateField={onUpdateField}
           placeholder="soft rim light"
           value={styleProfile.lighting}
         />
         <StyleInput
           field="viewRule"
-          label="View rule"
+          label="视角规则"
           onUpdateField={onUpdateField}
           placeholder="front-facing sprites"
           value={styleProfile.viewRule}
         />
         <StyleInput
           field="avoidElements"
-          label="Avoid"
+          label="避免元素"
           onUpdateField={onUpdateField}
           placeholder="modern weapons, text, watermark"
           value={styleProfile.avoidElements}

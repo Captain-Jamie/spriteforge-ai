@@ -30,41 +30,41 @@ export const ASSET_SIZES = ["64x64", "128x128", "256x256", "512x512"] as const;
 export const BACKGROUND_MODES = ["transparent", "solid", "scene"] as const;
 
 export const ASSET_TYPE_LABELS: Record<(typeof ASSET_TYPES)[number], string> = {
-  character: "Character",
-  item: "Item",
-  icon: "Icon",
-  tile: "Tile",
-  ui: "UI Element",
-  background: "Background"
+  character: "角色",
+  item: "道具",
+  icon: "图标",
+  tile: "地块",
+  ui: "界面元素",
+  background: "背景"
 };
 
 export const ART_STYLE_LABELS: Record<(typeof ART_STYLES)[number], string> = {
-  pixel_art: "Pixel Art",
-  cartoon: "Cartoon",
-  hand_drawn: "Hand Drawn",
-  dark_fantasy: "Dark Fantasy",
-  chibi: "Chibi"
+  pixel_art: "像素风",
+  cartoon: "卡通",
+  hand_drawn: "手绘",
+  dark_fantasy: "暗黑幻想",
+  chibi: "Q 版"
 };
 
 export const GAME_GENRE_LABELS: Record<(typeof GAME_GENRES)[number], string> = {
   rpg: "RPG",
-  platformer: "Platformer",
-  tower_defense: "Tower Defense",
+  platformer: "平台跳跃",
+  tower_defense: "塔防",
   roguelike: "Roguelike",
-  puzzle: "Puzzle"
+  puzzle: "解谜"
 };
 
 export const VIEW_LABELS: Record<(typeof ASSET_VIEWS)[number], string> = {
-  front: "Front View",
-  side: "Side View",
-  top_down: "Top Down",
-  isometric: "Isometric"
+  front: "正面",
+  side: "侧面",
+  top_down: "俯视",
+  isometric: "等距"
 };
 
 export const BACKGROUND_LABELS: Record<(typeof BACKGROUND_MODES)[number], string> = {
-  transparent: "Transparent",
-  solid: "Solid Color",
-  scene: "Scene Background"
+  transparent: "透明背景",
+  solid: "纯色背景",
+  scene: "场景背景"
 };
 
 export const ASSET_TYPE_PROMPT_PARTS: Record<(typeof ASSET_TYPES)[number], string> = {

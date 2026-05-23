@@ -1,30 +1,30 @@
-import { Boxes, CircleCheck, Database, WandSparkles } from "lucide-react";
+import { Archive, Brush, Library, WandSparkles } from "lucide-react";
 
 export function AppHeader() {
   return (
-    <header className="border-b border-zinc-200 bg-white">
-      <div className="mx-auto flex w-full max-w-7xl flex-col gap-4 px-4 py-4 lg:flex-row lg:items-center lg:justify-between lg:px-6">
+    <header className="border-b border-zinc-800 bg-zinc-950 text-white">
+      <div className="mx-auto flex w-full max-w-[1500px] flex-col gap-4 px-4 py-4 lg:flex-row lg:items-center lg:justify-between lg:px-6">
         <div className="flex items-center gap-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-teal-700 text-white">
+          <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-teal-500 text-zinc-950 shadow-sm shadow-teal-950/40">
             <WandSparkles size={22} aria-hidden="true" />
           </div>
           <div>
-            <h1 className="text-xl font-semibold leading-tight text-zinc-950">SpriteForge AI</h1>
-            <p className="mt-1 text-sm text-zinc-600">2D game asset generation workbench</p>
+            <h1 className="text-xl font-semibold leading-tight tracking-wide">SpriteForge AI</h1>
+            <p className="mt-1 text-sm text-zinc-400">2D 游戏素材生成工作台</p>
           </div>
         </div>
         <div className="flex flex-wrap items-center gap-2 text-sm">
-          <span className="inline-flex items-center gap-2 rounded-md border border-teal-200 bg-teal-50 px-3 py-2 text-teal-900">
-            <CircleCheck size={16} aria-hidden="true" />
-            API-ready pipeline
+          <span className="inline-flex items-center gap-2 rounded-md border border-zinc-700 bg-zinc-900 px-3 py-2 text-zinc-200">
+            <Brush size={16} aria-hidden="true" />
+            风格档案
           </span>
-          <span className="inline-flex items-center gap-2 rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-amber-900">
-            <Database size={16} aria-hidden="true" />
-            Local asset library
+          <span className="inline-flex items-center gap-2 rounded-md border border-zinc-700 bg-zinc-900 px-3 py-2 text-zinc-200">
+            <Library size={16} aria-hidden="true" />
+            素材库
           </span>
-          <span className="inline-flex items-center gap-2 rounded-md border border-sky-200 bg-sky-50 px-3 py-2 text-sky-900">
-            <Boxes size={16} aria-hidden="true" />
-            Export pipeline
+          <span className="inline-flex items-center gap-2 rounded-md border border-zinc-700 bg-zinc-900 px-3 py-2 text-zinc-200">
+            <Archive size={16} aria-hidden="true" />
+            交付导出
           </span>
         </div>
       </div>
