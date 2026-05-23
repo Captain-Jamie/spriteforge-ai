@@ -41,13 +41,31 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ assets, prompt, mode });
   } catch (error) {
+    const message = error instanceof Error ? error.message : "Unexpected generation error";
+
     return NextResponse.json(
       {
-        error: error instanceof Error ? error.message : "Unexpected generation error"
+        error: message
       },
-      { status: 500 }
+      { status: getGenerationErrorStatus(message) }
     );
   }
+}
+
+function getGenerationErrorStatus(message: string) {
+  if (message.includes("DASHSCOPE_API_KEY") || message.includes("IMAGE_MODEL")) {
+    return 503;
+  }
+
+  if (message.includes("timed out")) {
+    return 504;
+  }
+
+  if (message.includes("DashScope")) {
+    return 502;
+  }
+
+  return 500;
 }
 
 function buildAssetName(description: string, index: number) {

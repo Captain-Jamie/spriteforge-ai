@@ -32,7 +32,7 @@ export async function generateImages({
 }
 
 function isMockMode() {
-  return process.env.MOCK_IMAGE_GENERATION !== "false";
+  return process.env.MOCK_IMAGE_GENERATION === "true";
 }
 
 async function generateDashScopeImages(

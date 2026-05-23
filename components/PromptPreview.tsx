@@ -17,7 +17,8 @@ export function PromptPreview({ error, isGenerating = false, mode, prompt }: Pro
       </div>
       {error ? (
         <div className="rounded-md border border-red-200 bg-red-50 p-4 text-sm leading-6 text-red-800">
-          {error}
+          <div className="mb-1 font-semibold text-red-900">Generation failed</div>
+          <p>{error}</p>
         </div>
       ) : null}
       {isGenerating ? (
