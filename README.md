@@ -8,7 +8,7 @@ SpriteForge AI 是一个面向独立游戏开发者和小型游戏团队的 2D �
 
 - 素材需求表单：支持素材类型、风格、游戏类型、视角、尺寸、背景和生成数量。
 - 项目风格档案：支持项目名、配色、线条风格、光照、视角规则和避免元素。
-- Prompt Builder：根据素材需求和风格档案生成 positive prompt 与 negative prompt。
+- Prompt Builder：根据素材需求和风格档案生成中文为主、中英混合关键词辅助的 positive prompt 与 negative prompt。
 - 真实 API 生图：支持通过阿里云百炼 DashScope 图像生成接口返回真实素材。
 - 本地素材库：支持生成结果持久化、选择、删除、复制 Prompt 和单图下载。
 - ZIP 导出：导出 `assets/`、`metadata.json` 和 `prompts.json`，真实 API 返回的远程图片会在服务端下载后写入 ZIP。
@@ -19,7 +19,7 @@ SpriteForge AI 是一个面向独立游戏开发者和小型游戏团队的 2D �
 本项目的原创实现包括：
 
 - 面向 2D 游戏素材生成场景的数据结构设计。
-- 将游戏素材需求转换为 Prompt 的 Prompt Builder。
+- 将游戏素材需求转换为适合国内文生图模型理解的 Prompt Builder。
 - 用于保持项目视觉一致性的 Style Profile 工作流。
 - 真实 API 与测试 Mock 共用的生成服务封装。
 - 素材库管理、导出 metadata、导出 prompts 和 ZIP 打包流程。
