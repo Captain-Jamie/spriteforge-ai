@@ -70,10 +70,22 @@ export async function buildExportZip(request: ExportApiRequest) {
   zip.file("prompts.json", JSON.stringify(prompts, null, 2));
 
   for (const asset of request.assets) {
-    zip.file(`assets/${buildAssetFileName(asset)}`, assetDataUrlToBuffer(asset.imageUrl));
+    zip.file(`assets/${buildAssetFileName(asset)}`, await assetImageUrlToBuffer(asset.imageUrl));
   }
 
   return zip.generateAsync({ type: "nodebuffer" });
+}
+
+async function assetImageUrlToBuffer(imageUrl: string) {
+  if (imageUrl.startsWith("data:")) {
+    return assetDataUrlToBuffer(imageUrl);
+  }
+
+  if (imageUrl.startsWith("http://") || imageUrl.startsWith("https://")) {
+    return fetchRemoteImage(imageUrl);
+  }
+
+  throw new Error("Unsupported asset image URL format");
 }
 
 function assetDataUrlToBuffer(dataUrl: string) {
@@ -88,4 +100,28 @@ function assetDataUrlToBuffer(dataUrl: string) {
   }
 
   return Buffer.from(decodeURIComponent(payload), "utf8");
+}
+
+async function fetchRemoteImage(imageUrl: string) {
+  let response: Response;
+
+  try {
+    response = await fetch(imageUrl);
+  } catch (error) {
+    throw new Error(
+      `Failed to fetch remote image: ${error instanceof Error ? error.message : "network error"}`
+    );
+  }
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch remote image (${response.status})`);
+  }
+
+  const arrayBuffer = await response.arrayBuffer();
+
+  if (arrayBuffer.byteLength === 0) {
+    throw new Error("Remote image response is empty");
+  }
+
+  return Buffer.from(arrayBuffer);
 }
