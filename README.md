@@ -10,6 +10,7 @@ SpriteForge AI 是一个面向独立游戏开发者和小型游戏团队的 2D �
 - 项目风格档案：支持项目名、配色、线条风格、光照、视角规则和避免元素。
 - Prompt Builder：根据素材需求和风格档案生成中文为主、中英混合关键词辅助的 positive prompt 与 negative prompt。
 - 真实 API 生图：支持通过阿里云百炼 DashScope 图像生成接口返回真实素材。
+- 透明背景后处理：透明背景素材会调用阿里云视觉智能开放平台通用分割，输出真实 alpha PNG。
 - 本地素材库：支持生成结果持久化、选择、删除、复制 Prompt 和单图下载。
 - ZIP 导出：导出 `assets/`、`metadata.json` 和 `prompts.json`，真实 API 返回的远程图片会在服务端下载后写入 ZIP。
 - Mock 测试模式：仅在显式开启时用于本地自动化测试，避免消耗真实 API 额度。
@@ -33,6 +34,7 @@ SpriteForge AI 是一个面向独立游戏开发者和小型游戏团队的 2D �
 - zod：请求数据结构校验。
 - react-hook-form / @hookform/resolvers：表单状态与校验集成。
 - JSZip：ZIP 素材包生成。
+- @alicloud/viapi-utils：将真实生成图片转换为阿里云视觉智能平台可处理的临时文件 URL。
 - lucide-react：界面图标。
 - Vitest：单元测试。
 - Playwright：端到端浏览器测试。
@@ -63,6 +65,7 @@ DASHSCOPE_IMAGE_ENDPOINT=https://dashscope.aliyuncs.com/api/v1/services/aigc/mul
 DASHSCOPE_TASK_ENDPOINT=https://dashscope.aliyuncs.com/api/v1/tasks
 DASHSCOPE_TASK_POLL_ATTEMPTS=20
 DASHSCOPE_TASK_POLL_INTERVAL_MS=3000
+ALIYUN_VIAPI_CREDENTIALS=
 ```
 
 真实 API 示例配置：
@@ -71,9 +74,12 @@ DASHSCOPE_TASK_POLL_INTERVAL_MS=3000
 MOCK_IMAGE_GENERATION=false
 DASHSCOPE_API_KEY=your_api_key
 IMAGE_MODEL=qwen-image-2.0
+ALIYUN_VIAPI_CREDENTIALS=your_access_key_id:your_access_key_secret
 ```
 
-请不要提交 `.env.local` 或任何 API Key。
+其中 `ALIYUN_VIAPI_CREDENTIALS` 仅在生成透明背景素材时需要，用于调用阿里云视觉智能开放平台通用分割。请先开通分割抠图服务，并给 RAM 用户授予 `AliyunVIAPIFullAccess` 或更小范围的等效权限。
+
+请不要提交 `.env.local`、API Key、AccessKeyId 或 AccessKeySecret。
 
 ## 生成模式说明
 

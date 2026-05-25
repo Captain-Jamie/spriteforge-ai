@@ -1,6 +1,13 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
+import ViapiUtil from "@alicloud/viapi-utils";
 import type { GenerateAssetRequest, PromptBuildResult } from "../lib/asset-schema";
 import { generateImages } from "../lib/image-service";
+
+vi.mock("@alicloud/viapi-utils", () => ({
+  default: {
+    upload: vi.fn(async () => "http://viapi-customer-temp.oss-cn-shanghai.aliyuncs.com/ak-id/test.png")
+  }
+}));
 
 const baseRequest: GenerateAssetRequest = {
   description: "a small sword icon",
@@ -33,6 +40,7 @@ describe("generateImages", () => {
   afterEach(() => {
     process.env = { ...originalEnv };
     vi.unstubAllGlobals();
+    vi.mocked(ViapiUtil.upload).mockClear();
   });
 
   it("uses mock images only when explicitly enabled", async () => {
@@ -66,6 +74,7 @@ describe("generateImages", () => {
     process.env.DASHSCOPE_API_KEY = "test-key";
     process.env.IMAGE_MODEL = "wanx-v1";
     process.env.DASHSCOPE_IMAGE_ENDPOINT = "https://example.test/image-generation";
+    const solidRequest: GenerateAssetRequest = { ...baseRequest, background: "solid" };
 
     const fetchMock = vi.fn(async () => {
       return new Response(
@@ -84,7 +93,7 @@ describe("generateImages", () => {
     vi.stubGlobal("fetch", fetchMock);
 
     const result = await generateImages({
-      request: baseRequest,
+      request: solidRequest,
       prompt: basePrompt
     });
 
@@ -132,6 +141,7 @@ describe("generateImages", () => {
     process.env.DASHSCOPE_TASK_ENDPOINT = "https://example.test/tasks";
     process.env.DASHSCOPE_TASK_POLL_ATTEMPTS = "3";
     process.env.DASHSCOPE_TASK_POLL_INTERVAL_MS = "1";
+    const solidRequest: GenerateAssetRequest = { ...baseRequest, background: "solid" };
 
     const fetchMock = vi
       .fn()
@@ -179,7 +189,7 @@ describe("generateImages", () => {
     vi.stubGlobal("fetch", fetchMock);
 
     const result = await generateImages({
-      request: baseRequest,
+      request: solidRequest,
       prompt: basePrompt
     });
 
@@ -210,9 +220,96 @@ describe("generateImages", () => {
 
     await expect(
       generateImages({
-        request: baseRequest,
+        request: { ...baseRequest, background: "solid" },
         prompt: basePrompt
       })
     ).rejects.toThrow("quota exceeded");
+  });
+
+  it("requires Aliyun credentials for transparent real image post-processing", async () => {
+    process.env.MOCK_IMAGE_GENERATION = "false";
+    process.env.DASHSCOPE_API_KEY = "test-key";
+    process.env.IMAGE_MODEL = "wanx-v1";
+    process.env.DASHSCOPE_IMAGE_ENDPOINT = "https://example.test/image-generation";
+    delete process.env.ALIYUN_VIAPI_CREDENTIALS;
+
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => {
+        return new Response(
+          JSON.stringify({
+            output: {
+              results: [{ url: "https://cdn.example.test/source.png" }]
+            }
+          }),
+          { status: 200 }
+        );
+      })
+    );
+
+    await expect(
+      generateImages({
+        request: baseRequest,
+        prompt: basePrompt
+      })
+    ).rejects.toThrow("ALIYUN_VIAPI_CREDENTIALS");
+  });
+
+  it("replaces transparent real image URLs with Aliyun segmented PNG URLs", async () => {
+    process.env.MOCK_IMAGE_GENERATION = "false";
+    process.env.DASHSCOPE_API_KEY = "test-key";
+    process.env.IMAGE_MODEL = "wanx-v1";
+    process.env.DASHSCOPE_IMAGE_ENDPOINT = "https://example.test/image-generation";
+    process.env.ALIYUN_VIAPI_CREDENTIALS = "ak-id:ak-secret";
+
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(
+        new Response(
+          JSON.stringify({
+            output: {
+              results: [{ url: "https://cdn.example.test/source.png", seed: 101 }]
+            }
+          }),
+          { status: 200 }
+        )
+      )
+      .mockResolvedValueOnce(
+        new Response(
+          JSON.stringify({
+            Data: {
+              ImageURL: "https://cdn.example.test/segmented-alpha.png"
+            }
+          }),
+          { status: 200 }
+        )
+      );
+
+    vi.stubGlobal("fetch", fetchMock);
+
+    const result = await generateImages({
+      request: { ...baseRequest, count: 1 },
+      prompt: basePrompt
+    });
+
+    expect(result.mode).toBe("real");
+    expect(result.images).toEqual([
+      { url: "https://cdn.example.test/segmented-alpha.png", seed: "101" }
+    ]);
+    expect(ViapiUtil.upload).toHaveBeenCalledWith(
+      "ak-id",
+      "ak-secret",
+      "https://cdn.example.test/source.png"
+    );
+    expect(fetchMock).toHaveBeenNthCalledWith(
+      2,
+      expect.stringContaining("Action=SegmentCommonImage"),
+      expect.objectContaining({ method: "POST" })
+    );
+    expect(fetchMock.mock.calls[1][0]).toEqual(
+      expect.stringContaining(
+        "ImageURL=http%3A%2F%2Fviapi-customer-temp.oss-cn-shanghai.aliyuncs.com%2Fak-id%2Ftest.png"
+      )
+    );
   });
 });

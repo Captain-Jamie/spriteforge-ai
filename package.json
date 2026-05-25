@@ -11,6 +11,7 @@
     "test:e2e": "node scripts/run-e2e.mjs"
   },
   "dependencies": {
+    "@alicloud/viapi-utils": "^1.0.0",
     "@hookform/resolvers": "^3.9.1",
     "jszip": "^3.10.1",
     "lucide-react": "^0.468.0",
