@@ -29,17 +29,17 @@ export function AssetCard({ asset, isSelected, onRemove, onToggleSelect }: Asset
 
   return (
     <article
-      className={`overflow-hidden rounded-lg border bg-white ${
-        isSelected ? "border-teal-600 ring-2 ring-teal-100" : "border-zinc-200"
+      className={`overflow-hidden rounded-lg border bg-white transition ${
+        isSelected ? "border-teal-600 shadow-sm ring-2 ring-teal-100" : "border-zinc-200 hover:border-zinc-300"
       }`}
     >
-      <div className="flex aspect-square items-center justify-center bg-[linear-gradient(45deg,#f4f4f5_25%,transparent_25%),linear-gradient(-45deg,#f4f4f5_25%,transparent_25%),linear-gradient(45deg,transparent_75%,#f4f4f5_75%),linear-gradient(-45deg,transparent_75%,#f4f4f5_75%)] bg-[length:20px_20px] bg-[position:0_0,0_10px,10px_-10px,-10px_0px]">
+      <div className="flex aspect-square items-center justify-center bg-[linear-gradient(45deg,#f4f4f5_25%,transparent_25%),linear-gradient(-45deg,#f4f4f5_25%,transparent_25%),linear-gradient(45deg,transparent_75%,#f4f4f5_75%),linear-gradient(-45deg,transparent_75%,#f4f4f5_75%)] bg-[length:20px_20px] bg-[position:0_0,0_10px,10px_-10px,-10px_0px] p-4">
         <div
-          className={`flex h-24 w-24 items-center justify-center rounded-md border ${toneClasses[tone]}`}
+          className={`flex h-full max-h-44 w-full max-w-44 items-center justify-center rounded-md border ${toneClasses[tone]}`}
         >
           {asset.imageUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img alt={asset.name} className="h-full w-full rounded-md object-cover" src={asset.imageUrl} />
+            <img alt={asset.name} className="h-full w-full rounded-md object-contain" src={asset.imageUrl} />
           ) : (
             <ImageIcon size={34} aria-hidden="true" />
           )}
@@ -64,7 +64,7 @@ export function AssetCard({ asset, isSelected, onRemove, onToggleSelect }: Asset
             type="button"
           >
             <Check size={15} aria-hidden="true" />
-            <span className="sr-only">Select asset</span>
+            <span className="sr-only">选择素材</span>
           </button>
         </div>
         <div className="grid grid-cols-3 gap-2">
@@ -90,7 +90,7 @@ export function AssetCard({ asset, isSelected, onRemove, onToggleSelect }: Asset
             type="button"
           >
             <Trash2 size={15} aria-hidden="true" />
-            <span className="sr-only sm:not-sr-only">Delete</span>
+            <span className="sr-only sm:not-sr-only">删除</span>
           </button>
         </div>
       </div>
