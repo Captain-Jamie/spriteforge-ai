@@ -2,7 +2,7 @@
 
 面向独立游戏开发者的 2D 游戏素材生成工作台。
 
-当前项目处于持续开发阶段，已搭建 Next.js 项目骨架，并开始实现素材请求数据结构与 Prompt Builder。
+当前项目的说明视频：https://www.bilibili.com/video/BV1GGGo6yEGq/?spm_id_from=333.1387.homepage.video_card.click&vd_source=eedbe76ac072925710c00d491d5a12c8
 
 ## 功能目标
 
