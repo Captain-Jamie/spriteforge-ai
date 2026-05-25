@@ -2,10 +2,10 @@
 
 import {
   Archive,
+  CheckSquare,
   FileArchive,
   FileImage,
   FileJson,
-  Filter,
   Grid2X2,
   Search,
   Trash2,
@@ -20,7 +20,7 @@ type AssetGalleryProps = {
   assets?: AssetRecord[];
   focusedAssetId?: string | null;
   onFocusAsset: (assetId: string) => void;
-  onClearAssets: () => void;
+  onRemoveSelectedAssets: (assetIds: string[]) => void;
   onRemoveAsset: (assetId: string) => void;
   onToggleSelectAsset: (assetId: string) => void;
   selectedAssets: AssetRecord[];
@@ -32,7 +32,7 @@ export function AssetGallery({
   assets = [],
   focusedAssetId,
   onFocusAsset,
-  onClearAssets,
+  onRemoveSelectedAssets,
   onRemoveAsset,
   onToggleSelectAsset,
   selectedAssets,
@@ -44,8 +44,10 @@ export function AssetGallery({
   const [assetTypeFilter, setAssetTypeFilter] = useState<AssetType | "all">("all");
   const [exportError, setExportError] = useState<string | null>(null);
   const [isExporting, setIsExporting] = useState(false);
+  const [isSpriteSheetExporting, setIsSpriteSheetExporting] = useState(false);
+  const [spriteSheetError, setSpriteSheetError] = useState<string | null>(null);
   const [isExportDialogOpen, setIsExportDialogOpen] = useState(false);
-  const [isClearDialogOpen, setIsClearDialogOpen] = useState(false);
+  const [isDeleteSelectedDialogOpen, setIsDeleteSelectedDialogOpen] = useState(false);
   const exportAssets = selectedAssets.length > 0 ? selectedAssets : assets;
   const exportMode = selectedAssets.length > 0 ? "selected" : "all";
   const exportLabel = useMemo(() => {
@@ -71,6 +73,18 @@ export function AssetGallery({
     return matchesType && matchesSearch;
   });
   const hasActiveFilters = Boolean(normalizedSearchTerm) || assetTypeFilter !== "all";
+  const canExportSpriteSheet = selectedAssets.length >= 2;
+  const spriteSheetFrameSize = readFrameSize(selectedAssets[0]?.size) ?? 128;
+  const spriteSheetColumns = Math.min(Math.ceil(Math.sqrt(selectedAssets.length)), selectedAssets.length || 1);
+
+  function handleSelectVisibleAssets() {
+    const allVisibleAssetsSelected = visibleAssets.every((asset) => selectedAssetIds.includes(asset.id));
+    const assetsToToggle = allVisibleAssetsSelected
+      ? visibleAssets
+      : visibleAssets.filter((asset) => !selectedAssetIds.includes(asset.id));
+
+    assetsToToggle.forEach((asset) => onToggleSelectAsset(asset.id));
+  }
 
   async function handleExport() {
     if (exportAssets.length === 0) {
@@ -111,6 +125,49 @@ export function AssetGallery({
     }
   }
 
+  async function handleExportSpriteSheet() {
+    if (!canExportSpriteSheet) {
+      return;
+    }
+
+    setSpriteSheetError(null);
+    setIsSpriteSheetExporting(true);
+
+    try {
+      const response = await fetch("/api/spritesheet", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          assets: selectedAssets,
+          columns: spriteSheetColumns,
+          frameWidth: spriteSheetFrameSize,
+          frameHeight: spriteSheetFrameSize
+        })
+      });
+
+      if (!response.ok) {
+        const payload = await readJsonResponse(response);
+        throw new Error(readErrorMessage(payload, "导出 Sprite Sheet 失败"));
+      }
+
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement("a");
+      anchor.href = url;
+      anchor.download = "spriteforge-spritesheet.zip";
+      document.body.appendChild(anchor);
+      anchor.click();
+      anchor.remove();
+      URL.revokeObjectURL(url);
+    } catch (exportError) {
+      setSpriteSheetError(exportError instanceof Error ? exportError.message : "导出 Sprite Sheet 失败");
+    } finally {
+      setIsSpriteSheetExporting(false);
+    }
+  }
+
   return (
     <section className="overflow-hidden rounded-lg border border-zinc-300 bg-white shadow-sm shadow-zinc-300/80">
       <div className="border-b border-zinc-200 bg-white px-3 py-2">
@@ -121,24 +178,31 @@ export function AssetGallery({
           </div>
           <div className="flex items-center gap-1">
             <button
-              aria-label="筛选素材"
+              aria-label="全选当前展示素材"
               className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-zinc-300 bg-white text-zinc-600 hover:bg-zinc-50"
+              disabled={visibleAssets.length === 0}
+              onClick={handleSelectVisibleAssets}
+              title="全选当前展示素材"
               type="button"
             >
-              <Filter size={15} aria-hidden="true" />
+              <CheckSquare size={15} aria-hidden="true" />
             </button>
             <button
-              aria-label="网格视图"
-              className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-zinc-300 bg-white text-zinc-600 hover:bg-zinc-50"
+              aria-label="导出 Sprite Sheet"
+              className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-zinc-300 bg-white text-zinc-600 hover:bg-zinc-50 disabled:border-zinc-200 disabled:text-zinc-300 disabled:hover:bg-white"
+              disabled={!canExportSpriteSheet || isSpriteSheetExporting}
+              onClick={handleExportSpriteSheet}
+              title={canExportSpriteSheet ? "导出 Sprite Sheet" : "选择至少 2 个素材后可导出 Sprite Sheet"}
               type="button"
             >
               <Grid2X2 size={15} aria-hidden="true" />
             </button>
             <button
-              aria-label="清空素材库"
+              aria-label="删除已选素材"
               className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-red-200 bg-white text-red-600 hover:bg-red-50 disabled:border-zinc-200 disabled:text-zinc-300 disabled:hover:bg-white"
-              disabled={assets.length === 0}
-              onClick={() => setIsClearDialogOpen(true)}
+              disabled={selectedAssetIds.length === 0}
+              onClick={() => setIsDeleteSelectedDialogOpen(true)}
+              title={selectedAssetIds.length > 0 ? "删除已选素材" : "选择素材后可批量删除"}
               type="button"
             >
               <Trash2 size={15} aria-hidden="true" />
@@ -222,6 +286,11 @@ export function AssetGallery({
       <div className="border-b border-zinc-200 bg-white px-3 py-1.5 text-xs font-medium text-zinc-500">
         当前显示 {visibleAssets.length} / {scopedAssets.length} 个素材
       </div>
+      {spriteSheetError ? (
+        <div className="border-b border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800">
+          {spriteSheetError}
+        </div>
+      ) : null}
       {visibleAssets.length > 0 ? (
         <div className="grid max-h-[calc(100vh-230px)] grid-cols-3 gap-2 overflow-y-auto bg-[#f2f3ef] p-2">
           {visibleAssets.map((asset) => (
@@ -306,21 +375,21 @@ export function AssetGallery({
           </div>
         </div>
       ) : null}
-      {isClearDialogOpen ? (
+      {isDeleteSelectedDialogOpen ? (
         <div className="fixed inset-0 z-50 grid place-items-center bg-zinc-950/55 p-4">
           <div className="w-full max-w-md overflow-hidden rounded-lg border border-zinc-300 bg-white shadow-xl shadow-zinc-950/25">
             <div className="border-b border-zinc-200 bg-[#f7f7f4] px-4 py-3">
-              <h3 className="text-base font-semibold text-zinc-950">确认清空素材库</h3>
-              <p className="mt-1 text-sm text-zinc-600">该操作会删除当前本地素材库中的全部素材。</p>
+              <h3 className="text-base font-semibold text-zinc-950">确认删除已选素材</h3>
+              <p className="mt-1 text-sm text-zinc-600">该操作只会删除当前已选素材，不会清空整个素材库。</p>
             </div>
             <div className="space-y-4 p-4">
               <div className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800">
-                确认清空 {assets.length} 个素材？
+                确认删除 {selectedAssetIds.length} 个已选素材？
               </div>
               <div className="flex justify-end gap-2">
                 <button
                   className="h-10 rounded-md border border-zinc-300 bg-white px-4 text-sm font-medium text-zinc-700 hover:bg-zinc-50"
-                  onClick={() => setIsClearDialogOpen(false)}
+                  onClick={() => setIsDeleteSelectedDialogOpen(false)}
                   type="button"
                 >
                   取消
@@ -328,12 +397,12 @@ export function AssetGallery({
                 <button
                   className="h-10 rounded-md bg-red-600 px-4 text-sm font-semibold text-white hover:bg-red-700"
                   onClick={() => {
-                    onClearAssets();
-                    setIsClearDialogOpen(false);
+                    onRemoveSelectedAssets(selectedAssetIds);
+                    setIsDeleteSelectedDialogOpen(false);
                   }}
                   type="button"
                 >
-                  确认清空
+                  确认删除
                 </button>
               </div>
             </div>
@@ -342,6 +411,15 @@ export function AssetGallery({
       ) : null}
     </section>
   );
+}
+
+function readFrameSize(size?: AssetRecord["size"]) {
+  if (!size) {
+    return null;
+  }
+
+  const [width, height] = size.split("x").map(Number);
+  return Number.isFinite(width) && width === height ? width : null;
 }
 
 async function readJsonResponse(response: Response) {

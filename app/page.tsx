@@ -1,13 +1,11 @@
 "use client";
 
-import { Palette } from "lucide-react";
 import { useState } from "react";
 import { AppHeader } from "@/components/AppHeader";
 import { AssetForm } from "@/components/AssetForm";
 import { AssetGallery } from "@/components/AssetGallery";
 import { CurrentPreview } from "@/components/CurrentPreview";
 import { PromptPreview } from "@/components/PromptPreview";
-import { StyleProfilePanel } from "@/components/StyleProfilePanel";
 import { useAssets } from "@/hooks/use-assets";
 import { useStyleProfile } from "@/hooks/use-style-profile";
 import type {
@@ -21,7 +19,6 @@ export default function HomePage() {
   const {
     addAssets,
     assets,
-    clearAssets,
     removeAsset,
     selectedAssets,
     selectedAssetIds,
@@ -35,7 +32,6 @@ export default function HomePage() {
   const [prompt, setPrompt] = useState<PromptBuildResult | null>(null);
   const [focusedAssetId, setFocusedAssetId] = useState<string | null>(null);
   const [isPromptOpen, setIsPromptOpen] = useState(false);
-  const [isStyleProfileOpen, setIsStyleProfileOpen] = useState(false);
   const [assetPendingDelete, setAssetPendingDelete] = useState<AssetRecord | null>(null);
   const focusedAsset = assets.find((asset) => asset.id === focusedAssetId) ?? assets[0] ?? null;
   const focusedPrompt: PromptBuildResult | null = focusedAsset
@@ -98,9 +94,13 @@ export default function HomePage() {
     setAssetPendingDelete(null);
   }
 
-  function handleClearAssets() {
-    clearAssets();
-    setFocusedAssetId(null);
+  function handleRemoveSelectedAssets(assetIds: string[]) {
+    const assetIdSet = new Set(assetIds);
+    assetIds.forEach((assetId) => removeAsset(assetId));
+
+    if (focusedAssetId && assetIdSet.has(focusedAssetId)) {
+      setFocusedAssetId(assets.find((asset) => !assetIdSet.has(asset.id))?.id ?? null);
+    }
   }
 
   return (
@@ -108,27 +108,14 @@ export default function HomePage() {
       <AppHeader />
       <div className="mx-auto grid w-full max-w-[1600px] gap-3 px-3 py-3 xl:grid-cols-[320px_minmax(620px,1fr)_420px] xl:px-4">
         <aside className="space-y-3 xl:sticky xl:top-3 xl:self-start">
-          <button
-            className="flex w-full items-center justify-between gap-3 rounded-lg border border-zinc-300 bg-white p-4 text-left shadow-sm shadow-zinc-300/80 transition hover:border-amber-400 hover:bg-amber-50"
-            onClick={() => setIsStyleProfileOpen(true)}
-            type="button"
-          >
-            <span className="flex items-center gap-3">
-              <span className="inline-flex h-10 w-10 items-center justify-center rounded-md border border-amber-200 bg-amber-50 text-amber-700">
-                <Palette size={20} aria-hidden="true" />
-              </span>
-              <span>
-                <span className="block text-base font-semibold text-zinc-950">项目风格档案</span>
-                <span className="mt-0.5 block text-xs text-zinc-500">
-                  {appliedStyleProfile > 0 ? `${appliedStyleProfile} 条规则生效` : "点击配置项目风格规则"}
-                </span>
-              </span>
-            </span>
-            <span className="rounded-md border border-zinc-300 bg-[#f7f7f4] px-2.5 py-1 text-xs font-medium text-zinc-700">
-              配置
-            </span>
-          </button>
-          <AssetForm isGenerating={isGenerating} onSubmit={handleGenerate} />
+          <AssetForm
+            appliedStyleProfile={appliedStyleProfile}
+            isGenerating={isGenerating}
+            onResetStyleProfile={resetStyleProfile}
+            onSubmit={handleGenerate}
+            onUpdateStyleProfileField={updateStyleProfileField}
+            styleProfile={styleProfile}
+          />
         </aside>
         <section className="space-y-3">
           <CurrentPreview
@@ -153,7 +140,6 @@ export default function HomePage() {
           <AssetGallery
             assets={assets}
             focusedAssetId={focusedAsset?.id}
-            onClearAssets={handleClearAssets}
             onFocusAsset={setFocusedAssetId}
             onRemoveAsset={(assetId) => {
               const targetAsset = assets.find((asset) => asset.id === assetId);
@@ -161,6 +147,7 @@ export default function HomePage() {
                 setAssetPendingDelete(targetAsset);
               }
             }}
+            onRemoveSelectedAssets={handleRemoveSelectedAssets}
             onToggleSelectAsset={toggleSelectAsset}
             selectedAssets={selectedAssets}
             selectedAssetIds={selectedAssetIds}
@@ -209,19 +196,6 @@ export default function HomePage() {
                 </button>
               </div>
             </div>
-          </div>
-        </div>
-      ) : null}
-      {isStyleProfileOpen ? (
-        <div className="fixed inset-0 z-50 grid place-items-center bg-zinc-950/55 p-4">
-          <div className="w-full max-w-xl">
-            <StyleProfilePanel
-              appliedCount={appliedStyleProfile}
-              onClose={() => setIsStyleProfileOpen(false)}
-              onReset={resetStyleProfile}
-              onUpdateField={updateStyleProfileField}
-              styleProfile={styleProfile}
-            />
           </div>
         </div>
       ) : null}
