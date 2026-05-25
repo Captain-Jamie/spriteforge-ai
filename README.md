@@ -2,7 +2,7 @@
 
 SpriteForge AI 是一个面向独立游戏开发者和小型游戏团队的 2D 游戏素材生成工作台。
 
-项目将用户输入的素材需求转换为结构化 Prompt，调用真实文生图 API 生成素材，并提供素材库管理、风格档案、Prompt 预览和 ZIP 素材包导出能力。
+当前项目的说明视频：https://www.bilibili.com/video/BV1GGGo6yEGq/?spm_id_from=333.1387.homepage.video_card.click&vd_source=eedbe76ac072925710c00d491d5a12c8
 
 ## 核心功能
 
