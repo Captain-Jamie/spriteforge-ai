@@ -1,30 +1,11 @@
 import { AssetCard } from "./AssetCard";
+import type { AssetRecord } from "@/lib/asset-schema";
 
-const sampleAssets = [
-  {
-    name: "fire_slime",
-    type: "Character",
-    style: "Pixel Art",
-    size: "128x128",
-    tone: "teal"
-  },
-  {
-    name: "magic_potion",
-    type: "Item",
-    style: "Pixel Art",
-    size: "128x128",
-    tone: "amber"
-  },
-  {
-    name: "grass_tile",
-    type: "Tile",
-    style: "Pixel Art",
-    size: "64x64",
-    tone: "sky"
-  }
-] as const;
+type AssetGalleryProps = {
+  assets?: AssetRecord[];
+};
 
-export function AssetGallery() {
+export function AssetGallery({ assets = [] }: AssetGalleryProps) {
   return (
     <section className="rounded-lg border border-zinc-200 bg-white p-4 shadow-sm">
       <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -41,11 +22,17 @@ export function AssetGallery() {
           </button>
         </div>
       </div>
-      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-        {sampleAssets.map((asset) => (
-          <AssetCard key={asset.name} {...asset} />
-        ))}
-      </div>
+      {assets.length > 0 ? (
+        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+          {assets.map((asset) => (
+            <AssetCard key={asset.id} asset={asset} />
+          ))}
+        </div>
+      ) : (
+        <div className="rounded-md border border-dashed border-zinc-300 bg-zinc-50 p-6 text-sm leading-6 text-zinc-600">
+          Generated mock assets will appear here after submitting a valid request.
+        </div>
+      )}
     </section>
   );
 }

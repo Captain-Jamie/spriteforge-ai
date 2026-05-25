@@ -26,10 +26,11 @@ const defaultValues: GenerateAssetRequest = {
 };
 
 type AssetFormProps = {
+  isGenerating?: boolean;
   onSubmit: (request: GenerateAssetRequest) => void;
 };
 
-export function AssetForm({ onSubmit }: AssetFormProps) {
+export function AssetForm({ isGenerating = false, onSubmit }: AssetFormProps) {
   const {
     formState: { errors, isSubmitSuccessful },
     handleSubmit,
@@ -102,11 +103,12 @@ export function AssetForm({ onSubmit }: AssetFormProps) {
         </label>
 
         <button
-          className="inline-flex h-10 w-full items-center justify-center gap-2 rounded-md bg-teal-700 px-4 text-sm font-semibold text-white transition hover:bg-teal-800"
+          className="inline-flex h-10 w-full items-center justify-center gap-2 rounded-md bg-teal-700 px-4 text-sm font-semibold text-white transition hover:bg-teal-800 disabled:bg-zinc-300 disabled:text-zinc-600"
+          disabled={isGenerating}
           type="submit"
         >
           <Sparkles size={17} aria-hidden="true" />
-          Prepare Request
+          {isGenerating ? "Generating..." : "Generate Assets"}
         </button>
 
         {isSubmitSuccessful ? (

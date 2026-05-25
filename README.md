@@ -20,6 +20,7 @@
 - JSZip：后续素材包导出。
 - lucide-react：后续界面图标。
 - Vitest：单元测试。
+- Playwright：端到端交互测试。
 
 ## 原创功能说明
 
@@ -35,6 +36,7 @@
 npm install
 npm run dev
 npm run test
+npm run test:e2e
 ```
 
 ## 环境变量
