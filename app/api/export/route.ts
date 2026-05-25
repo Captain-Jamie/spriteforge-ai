@@ -26,11 +26,25 @@ export async function POST(request: Request) {
       }
     });
   } catch (error) {
+    const message = error instanceof Error ? error.message : "Unexpected export error";
+
     return NextResponse.json(
       {
-        error: error instanceof Error ? error.message : "Unexpected export error"
+        error: message
       },
-      { status: 500 }
+      { status: getExportErrorStatus(message) }
     );
   }
+}
+
+function getExportErrorStatus(message: string) {
+  if (message.includes("Unsupported asset image URL format")) {
+    return 400;
+  }
+
+  if (message.includes("Failed to fetch remote image") || message.includes("Remote image response is empty")) {
+    return 502;
+  }
+
+  return 500;
 }

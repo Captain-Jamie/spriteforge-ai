@@ -11,7 +11,7 @@ SpriteForge AI 是一个面向独立游戏开发者和小型游戏团队的 2D �
 - Prompt Builder：根据素材需求和风格档案生成 positive prompt 与 negative prompt。
 - 真实 API 生图：支持通过阿里云百炼 DashScope 图像生成接口返回真实素材。
 - 本地素材库：支持生成结果持久化、选择、删除、复制 Prompt 和单图下载。
-- ZIP 导出：导出 `assets/`、`metadata.json` 和 `prompts.json`。
+- ZIP 导出：导出 `assets/`、`metadata.json` 和 `prompts.json`，真实 API 返回的远程图片会在服务端下载后写入 ZIP。
 - Mock 测试模式：仅在显式开启时用于本地自动化测试，避免消耗真实 API 额度。
 
 ## 原创功能说明
@@ -117,4 +117,4 @@ $env:MOCK_IMAGE_GENERATION='true'; npm run test:e2e
 5. 在 Asset Library 中选择、删除或下载素材。
 6. 点击 Export ZIP 导出素材包。
 
-导出的 ZIP 包包含素材文件、metadata 和 prompts，可用于展示“需求输入 -> Prompt 生成 -> AI 生图 -> 素材管理 -> 交付导出”的完整流程。
+导出的 ZIP 包包含素材文件、metadata 和 prompts。真实 API 生成的远程图片会被下载并写入 `assets/`，避免导出结果依赖临时图片链接，可用于展示“需求输入 -> Prompt 生成 -> AI 生图 -> 素材管理 -> 交付导出”的完整流程。
