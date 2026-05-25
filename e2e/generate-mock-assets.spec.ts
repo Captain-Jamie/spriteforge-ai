@@ -17,28 +17,43 @@ test("generates mock assets and prompt from the request form", async ({ page }) 
 
   await page.getByRole("button", { name: "生成素材" }).click();
 
+  await expect(page.getByRole("heading", { name: "当前生成结果" })).toBeVisible();
+  await expect(page.locator("section").filter({ hasText: "当前生成结果" }).getByText("角色")).toBeVisible();
+  await expect(page.getByText("当前预览")).toBeVisible();
   await expect(page.getByText("pixel art style")).toBeVisible();
   await expect(page.getByText("已应用风格档案")).toBeVisible();
   await expect(page.locator("li").filter({ hasText: "project style reference: Crystal Dungeon" })).toBeVisible();
   await expect(page.locator("li").filter({ hasText: "color palette: cyan, violet, deep navy" })).toBeVisible();
   await expect(page.locator("li").filter({ hasText: "avoid: modern weapons" })).toBeVisible();
   await expect(page.getByText("text, watermark")).toBeVisible();
-  await expect(page.getByText("fire_slime_monster_1")).toBeVisible();
-  await expect(page.getByText("fire_slime_monster_2")).toBeVisible();
+  await expect(
+    page.locator("section").filter({ hasText: "当前生成结果" }).getByRole("heading", {
+      name: "fire_slime_monster_1"
+    })
+  ).toBeVisible();
+  await expect(page.locator("article").filter({ hasText: "fire_slime_monster_1" })).toBeVisible();
+  await expect(page.locator("article").filter({ hasText: "fire_slime_monster_2" })).toBeVisible();
 
   await page.reload();
 
   await expect(page.getByLabel("项目名称")).toHaveValue("Crystal Dungeon");
   await expect(page.getByLabel("配色方案")).toHaveValue("cyan, violet, deep navy");
-  await expect(page.getByText("fire_slime_monster_1")).toBeVisible();
-  await expect(page.getByText("fire_slime_monster_2")).toBeVisible();
+  await expect(page.locator("article").filter({ hasText: "fire_slime_monster_1" })).toBeVisible();
+  await expect(page.locator("article").filter({ hasText: "fire_slime_monster_2" })).toBeVisible();
+
+  await page.locator("article").filter({ hasText: "fire_slime_monster_2" }).getByRole("button").first().click();
+  await expect(
+    page.locator("section").filter({ hasText: "当前生成结果" }).getByRole("heading", {
+      name: "fire_slime_monster_2"
+    })
+  ).toBeVisible();
 
   const firstCard = page.locator("article").filter({ hasText: "fire_slime_monster_1" });
   await firstCard.getByRole("button", { name: "选择素材" }).click();
   await page.getByRole("button", { name: "已选 (1)" }).click();
 
-  await expect(page.getByText("fire_slime_monster_1")).toBeVisible();
-  await expect(page.getByText("fire_slime_monster_2")).not.toBeVisible();
+  await expect(page.locator("article").filter({ hasText: "fire_slime_monster_1" })).toBeVisible();
+  await expect(page.locator("article").filter({ hasText: "fire_slime_monster_2" })).not.toBeVisible();
 
   await firstCard.getByRole("button", { name: "删除" }).click();
 
@@ -46,8 +61,8 @@ test("generates mock assets and prompt from the request form", async ({ page }) 
 
   await page.getByRole("button", { name: "全部" }).click();
 
-  await expect(page.getByText("fire_slime_monster_1")).not.toBeVisible();
-  await expect(page.getByText("fire_slime_monster_2")).toBeVisible();
+  await expect(page.locator("article").filter({ hasText: "fire_slime_monster_1" })).not.toBeVisible();
+  await expect(page.locator("article").filter({ hasText: "fire_slime_monster_2" })).toBeVisible();
 
   const downloadPromise = page.waitForEvent("download");
   await page.getByRole("button", { name: "导出 ZIP" }).click();

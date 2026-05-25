@@ -11,12 +11,21 @@ const toneClasses = {
 
 type AssetCardProps = {
   asset: AssetRecord;
+  isFocused?: boolean;
   isSelected: boolean;
+  onFocus?: () => void;
   onRemove: () => void;
   onToggleSelect: () => void;
 };
 
-export function AssetCard({ asset, isSelected, onRemove, onToggleSelect }: AssetCardProps) {
+export function AssetCard({
+  asset,
+  isFocused = false,
+  isSelected,
+  onFocus,
+  onRemove,
+  onToggleSelect
+}: AssetCardProps) {
   const tone = getTone(asset.assetType);
 
   async function handleCopyPrompt() {
@@ -30,10 +39,18 @@ export function AssetCard({ asset, isSelected, onRemove, onToggleSelect }: Asset
   return (
     <article
       className={`overflow-hidden rounded-lg border bg-white transition ${
-        isSelected ? "border-teal-600 shadow-sm ring-2 ring-teal-100" : "border-zinc-200 hover:border-zinc-300"
+        isSelected
+          ? "border-teal-600 shadow-sm ring-2 ring-teal-100"
+          : isFocused
+            ? "border-zinc-800 shadow-sm ring-2 ring-zinc-200"
+            : "border-zinc-200 hover:border-zinc-300"
       }`}
     >
-      <div className="flex aspect-square items-center justify-center bg-[linear-gradient(45deg,#f4f4f5_25%,transparent_25%),linear-gradient(-45deg,#f4f4f5_25%,transparent_25%),linear-gradient(45deg,transparent_75%,#f4f4f5_75%),linear-gradient(-45deg,transparent_75%,#f4f4f5_75%)] bg-[length:20px_20px] bg-[position:0_0,0_10px,10px_-10px,-10px_0px] p-4">
+      <button
+        className="flex aspect-square w-full items-center justify-center bg-[linear-gradient(45deg,#f4f4f5_25%,transparent_25%),linear-gradient(-45deg,#f4f4f5_25%,transparent_25%),linear-gradient(45deg,transparent_75%,#f4f4f5_75%),linear-gradient(-45deg,transparent_75%,#f4f4f5_75%)] bg-[length:20px_20px] bg-[position:0_0,0_10px,10px_-10px,-10px_0px] p-4"
+        onClick={onFocus}
+        type="button"
+      >
         <div
           className={`flex h-full max-h-44 w-full max-w-44 items-center justify-center rounded-md border ${toneClasses[tone]}`}
         >
@@ -44,7 +61,7 @@ export function AssetCard({ asset, isSelected, onRemove, onToggleSelect }: Asset
             <ImageIcon size={34} aria-hidden="true" />
           )}
         </div>
-      </div>
+      </button>
       <div className="space-y-3 p-3">
         <div className="flex items-start justify-between gap-2">
           <div>
@@ -52,6 +69,9 @@ export function AssetCard({ asset, isSelected, onRemove, onToggleSelect }: Asset
             <p className="mt-1 text-xs text-zinc-500">
               {ASSET_TYPE_LABELS[asset.assetType]} · {ART_STYLE_LABELS[asset.style]} · {asset.size}
             </p>
+            {isFocused ? (
+              <p className="mt-1 text-xs font-medium text-zinc-900">当前预览</p>
+            ) : null}
           </div>
           <button
             aria-pressed={isSelected}
