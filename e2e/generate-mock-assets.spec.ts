@@ -18,14 +18,26 @@ test("generates mock assets and prompt from the request form", async ({ page }) 
   await page.getByRole("button", { name: "生成素材" }).click();
 
   await expect(page.getByRole("heading", { name: "当前生成结果" })).toBeVisible();
-  await expect(page.locator("section").filter({ hasText: "当前生成结果" }).getByText("角色")).toBeVisible();
+  await expect(
+    page
+      .locator("section")
+      .filter({ hasText: "当前生成结果" })
+      .locator("div")
+      .filter({ hasText: /^素材类型角色$/ })
+      .first()
+  ).toBeVisible();
   await expect(page.getByText("当前预览")).toBeVisible();
-  await expect(page.getByText("pixel art style")).toBeVisible();
-  await expect(page.getByText("已应用风格档案")).toBeVisible();
-  await expect(page.locator("li").filter({ hasText: "project style reference: Crystal Dungeon" })).toBeVisible();
-  await expect(page.locator("li").filter({ hasText: "color palette: cyan, violet, deep navy" })).toBeVisible();
-  await expect(page.locator("li").filter({ hasText: "avoid: modern weapons" })).toBeVisible();
-  await expect(page.getByText("text, watermark")).toBeVisible();
+  const promptWorkspace = page
+    .getByRole("heading", { name: "生成工作区" })
+    .locator("xpath=ancestor::section[1]");
+  await expect(promptWorkspace.getByText("像素风")).toBeVisible();
+  await expect(promptWorkspace.getByText("pixel art")).toBeVisible();
+  await expect(promptWorkspace.getByText("已应用风格档案")).toBeVisible();
+  await expect(promptWorkspace.locator("li").filter({ hasText: "项目风格参考：Crystal Dungeon" })).toBeVisible();
+  await expect(promptWorkspace.locator("li").filter({ hasText: "配色方案：cyan, violet, deep navy" })).toBeVisible();
+  await expect(promptWorkspace.locator("li").filter({ hasText: "避免元素：modern weapons" })).toBeVisible();
+  await expect(promptWorkspace.locator("div").filter({ hasText: "反向 Prompt" }).getByText("文字")).toBeVisible();
+  await expect(promptWorkspace.locator("div").filter({ hasText: "反向 Prompt" }).getByText("水印")).toBeVisible();
   await expect(
     page.locator("section").filter({ hasText: "当前生成结果" }).getByRole("heading", {
       name: "fire_slime_monster_1"

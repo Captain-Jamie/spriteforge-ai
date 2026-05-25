@@ -69,64 +69,64 @@ export const BACKGROUND_LABELS: Record<(typeof BACKGROUND_MODES)[number], string
 
 export const ASSET_TYPE_PROMPT_PARTS: Record<(typeof ASSET_TYPES)[number], string> = {
   character:
-    "2D game character asset, full body, centered composition, clean silhouette, readable at small size",
+    "2D 游戏角色素材，完整身体，居中构图，清晰剪影，小尺寸可读，game character sprite",
   item:
-    "2D game item prop, isolated object, centered composition, clear shape, inventory-ready asset",
+    "2D 游戏道具素材，独立物体，居中构图，轮廓明确，适合背包或掉落物，inventory item",
   icon:
-    "2D game icon, simple readable symbol, centered composition, clean edge, suitable for UI inventory",
+    "2D 游戏图标，符号清晰，居中构图，边缘干净，适合 UI 或背包栏，game icon",
   tile:
-    "2D game terrain tile, seamless tileable pattern, clear top surface, suitable for tilemap workflow",
+    "2D 地形地块素材，可平铺纹理，顶部表面清晰，适合 tilemap 工作流，seamless tile",
   ui:
-    "2D game UI element, clean interface asset, readable shape, suitable for game HUD or menu",
+    "2D 游戏界面元素，形状清晰，适合 HUD 或菜单，game UI asset",
   background:
-    "2D game background asset, layered scene composition, clear depth, suitable for game environment"
+    "2D 游戏背景素材，场景层次清楚，空间深度明确，适合游戏环境，game background"
 };
 
 export const ART_STYLE_PROMPT_PARTS: Record<(typeof ART_STYLES)[number], string> = {
   pixel_art:
-    "pixel art style, crisp pixels, limited color palette, no anti-aliasing, game sprite aesthetic",
+    "像素风，pixel art，清晰像素，有限色板，无抗锯齿，game sprite aesthetic",
   cartoon:
-    "cartoon style, bold outline, bright colors, simple shading, playful game-ready look",
+    "卡通风格，cartoon style，粗轮廓，明亮配色，简洁明暗，playful game-ready look",
   hand_drawn:
-    "hand drawn style, organic line work, soft texture, illustrated game asset look",
+    "手绘风格，hand drawn style，自然线条，柔和质感，illustrated game asset look",
   dark_fantasy:
-    "dark fantasy style, dramatic contrast, muted palette, ornate details, moody game asset",
+    "暗黑幻想风格，dark fantasy，强烈明暗对比，低饱和配色，精致细节，moody game asset",
   chibi:
-    "chibi style, cute proportions, rounded forms, expressive and compact game asset"
+    "Q 版风格，chibi style，可爱比例，圆润形体，表情明确，compact game asset"
 };
 
 export const GAME_GENRE_PROMPT_PARTS: Record<(typeof GAME_GENRES)[number], string> = {
-  rpg: "suitable for a 2D RPG game, readable as an RPG asset",
-  platformer: "suitable for a 2D platformer game, clear side-scrolling readability",
-  tower_defense: "suitable for a tower defense game, readable from strategic gameplay view",
-  roguelike: "suitable for a roguelike game, compact and repeatable asset design",
-  puzzle: "suitable for a puzzle game, simple readable visual language"
+  rpg: "适合 2D RPG 游戏，作为 RPG 素材易识别",
+  platformer: "适合 2D 平台跳跃游戏，侧向移动场景中易读",
+  tower_defense: "适合塔防游戏，从策略视角观察时轮廓清楚",
+  roguelike: "适合 Roguelike 游戏，紧凑且可重复使用的素材设计",
+  puzzle: "适合解谜游戏，视觉语言简洁易读"
 };
 
 export const VIEW_PROMPT_PARTS: Record<(typeof ASSET_VIEWS)[number], string> = {
-  front: "front view, symmetrical presentation",
-  side: "side view, suitable for side-scrolling gameplay",
-  top_down: "top-down view, readable from above",
-  isometric: "isometric view, consistent 2D game perspective"
+  front: "正面视角，front view，对称展示",
+  side: "侧面视角，side view，适合横版玩法",
+  top_down: "俯视视角，top-down view，从上方观察仍清晰",
+  isometric: "等距视角，isometric view，保持统一 2D 游戏透视"
 };
 
 export const BACKGROUND_PROMPT_PARTS: Record<(typeof BACKGROUND_MODES)[number], string> = {
-  transparent: "transparent background, isolated asset, no scene background",
-  solid: "plain solid color background, easy to remove",
-  scene: "simple game scene background, uncluttered composition"
+  transparent: "透明背景，transparent background，独立素材，无场景背景",
+  solid: "纯色背景，plain solid color background，便于抠图",
+  scene: "简洁游戏场景背景，simple game scene background，构图不拥挤"
 };
 
 export const BASE_NEGATIVE_PROMPT_PARTS = [
-  "text",
-  "watermark",
+  "文字",
+  "水印",
   "logo",
-  "signature",
-  "blurry",
-  "low resolution",
-  "realistic photo",
-  "complex background",
-  "cropped subject",
-  "inconsistent style",
-  "extra limbs",
-  "duplicate objects"
+  "签名",
+  "模糊",
+  "低分辨率",
+  "真实照片质感",
+  "复杂背景",
+  "主体被裁切",
+  "风格不一致",
+  "多余肢体",
+  "重复物体"
 ];
