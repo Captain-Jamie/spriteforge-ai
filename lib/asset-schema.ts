@@ -37,6 +37,7 @@ export const PromptBuildResultSchema = z.object({
 
 export const AssetRecordSchema = z.object({
   id: z.string().min(1),
+  batchId: z.string().min(1).optional(),
   name: z.string().min(1),
   assetType: z.enum(ASSET_TYPES),
   style: z.enum(ART_STYLES),
@@ -47,6 +48,7 @@ export const AssetRecordSchema = z.object({
   prompt: z.string().min(1),
   negativePrompt: z.string().min(1),
   imageUrl: z.string().min(1),
+  sourceImageUrl: z.string().min(1).optional(),
   createdAt: z.string().min(1)
 });
 
@@ -56,11 +58,38 @@ export const ExportPackageSchema = z.object({
   exportedAt: z.string().min(1)
 });
 
+export const ExportApiRequestSchema = z.object({
+  assets: z.array(AssetRecordSchema).min(1),
+  styleProfile: StyleProfileSchema.optional()
+});
+
+export const SpriteSheetRequestSchema = z.object({
+  assets: z.array(AssetRecordSchema).min(2).max(64),
+  columns: z.number().int().min(1).max(16),
+  frameWidth: z.number().int().min(16).max(1024),
+  frameHeight: z.number().int().min(16).max(1024)
+});
+
+export const GeneratedImageSchema = z.object({
+  url: z.string().min(1),
+  seed: z.string().optional()
+});
+
+export const GenerateApiResponseSchema = z.object({
+  assets: z.array(AssetRecordSchema),
+  prompt: PromptBuildResultSchema,
+  mode: z.enum(["mock", "real"])
+});
+
 export type StyleProfile = z.infer<typeof StyleProfileSchema>;
 export type GenerateAssetRequest = z.infer<typeof GenerateAssetRequestSchema>;
 export type PromptBuildResult = z.infer<typeof PromptBuildResultSchema>;
 export type AssetRecord = z.infer<typeof AssetRecordSchema>;
 export type ExportPackage = z.infer<typeof ExportPackageSchema>;
+export type ExportApiRequest = z.infer<typeof ExportApiRequestSchema>;
+export type SpriteSheetRequest = z.infer<typeof SpriteSheetRequestSchema>;
+export type GeneratedImage = z.infer<typeof GeneratedImageSchema>;
+export type GenerateApiResponse = z.infer<typeof GenerateApiResponseSchema>;
 export type AssetType = GenerateAssetRequest["assetType"];
 export type ArtStyle = GenerateAssetRequest["style"];
 export type GameGenre = GenerateAssetRequest["gameGenre"];

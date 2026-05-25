@@ -28,11 +28,11 @@ function buildStyleProfileParts(styleProfile?: StyleProfile) {
   }
 
   const positiveParts = compactParts([
-    styleProfile.projectName && `project style reference: ${styleProfile.projectName}`,
-    styleProfile.palette && `color palette: ${styleProfile.palette}`,
-    styleProfile.lineStyle && `line style: ${styleProfile.lineStyle}`,
-    styleProfile.lighting && `lighting: ${styleProfile.lighting}`,
-    styleProfile.viewRule && `project view rule: ${styleProfile.viewRule}`
+    styleProfile.projectName && `项目风格参考：${styleProfile.projectName}`,
+    styleProfile.palette && `配色方案：${styleProfile.palette}`,
+    styleProfile.lineStyle && `线条风格：${styleProfile.lineStyle}`,
+    styleProfile.lighting && `光照规则：${styleProfile.lighting}`,
+    styleProfile.viewRule && `项目视角规则：${styleProfile.viewRule}`
   ]);
 
   const negativeParts = compactParts([styleProfile.avoidElements]);
@@ -40,7 +40,7 @@ function buildStyleProfileParts(styleProfile?: StyleProfile) {
   return {
     positiveParts,
     negativeParts,
-    appliedStyleProfile: [...positiveParts, ...negativeParts.map((part) => `avoid: ${part}`)]
+    appliedStyleProfile: [...positiveParts, ...negativeParts.map((part) => `避免元素：${part}`)]
   };
 }
 
@@ -58,16 +58,19 @@ export function buildPrompt(request: GenerateAssetRequest): PromptBuildResult {
     GAME_GENRE_PROMPT_PARTS[request.gameGenre],
     VIEW_PROMPT_PARTS[request.view],
     BACKGROUND_PROMPT_PARTS[request.background],
-    `target size ${request.size}`,
-    "clean outline",
-    "game-ready asset",
-    "consistent visual language",
+    `目标尺寸 ${request.size}`,
+    "清晰轮廓，clean outline",
+    "游戏可用素材，game-ready asset",
+    "统一视觉语言，consistent visual language",
     ...styleProfileParts.positiveParts
   ]);
 
   const negativeParts = compactParts([
     ...BASE_NEGATIVE_PROMPT_PARTS,
-    request.background !== "scene" && "busy scene background",
+    request.background !== "scene" && "杂乱场景背景",
+    request.background === "transparent" && "白色背景",
+    request.background === "transparent" && "假透明背景",
+    request.background === "transparent" && "棋盘格背景",
     ...styleProfileParts.negativeParts
   ]);
 

@@ -7,9 +7,11 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "vitest run"
+    "test": "vitest run",
+    "test:e2e": "node scripts/run-e2e.mjs"
   },
   "dependencies": {
+    "@alicloud/viapi-utils": "^1.0.0",
     "@hookform/resolvers": "^3.9.1",
     "jszip": "^3.10.1",
     "lucide-react": "^0.468.0",
@@ -17,9 +19,11 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.53.2",
+    "sharp": "^0.34.5",
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@playwright/test": "^1.60.0",
     "@types/node": "^22.10.2",
     "@types/react": "^19.0.1",
     "@types/react-dom": "^19.0.2",

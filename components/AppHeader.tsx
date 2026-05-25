@@ -1,3 +1,19 @@
+import { WandSparkles } from "lucide-react";
+
 export function AppHeader() {
-  return null;
+  return (
+    <header className="border-b border-zinc-800 bg-[#101214] text-white shadow-sm shadow-zinc-950/30">
+      <div className="mx-auto flex w-full max-w-[1600px] items-center px-3 py-3 lg:px-4">
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-teal-300/40 bg-teal-400 text-zinc-950 shadow-sm shadow-teal-950/40">
+            <WandSparkles size={22} aria-hidden="true" />
+          </div>
+          <div>
+            <h1 className="text-lg font-semibold leading-tight">SpriteForge AI</h1>
+            <p className="mt-0.5 text-xs text-zinc-400">2D 游戏素材生成工作台</p>
+          </div>
+        </div>
+      </div>
+    </header>
+  );
 }

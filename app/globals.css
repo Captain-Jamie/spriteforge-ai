@@ -8,4 +8,68 @@
 
 body {
   margin: 0;
+  background: #e7e8e2;
+  color: #09090b;
+  font-family:
+    Arial,
+    "Microsoft YaHei",
+    "PingFang SC",
+    sans-serif;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
+}
+
+::selection {
+  background: #99f6e4;
+  color: #042f2e;
+}
+
+.workbench-bg {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(231, 232, 226, 0.88)),
+    radial-gradient(circle at 24px 24px, rgba(39, 39, 42, 0.08) 1px, transparent 1px);
+  background-size: auto, 24px 24px;
+}
+
+.canvas-checker {
+  background-color: #f8fafc;
+  background-image:
+    linear-gradient(45deg, #e4e4e7 25%, transparent 25%),
+    linear-gradient(-45deg, #e4e4e7 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #e4e4e7 75%),
+    linear-gradient(-45deg, transparent 75%, #e4e4e7 75%);
+  background-position:
+    0 0,
+    0 12px,
+    12px -12px,
+    -12px 0;
+  background-size: 24px 24px;
+}
+
+.mini-checker {
+  background-color: #f8fafc;
+  background-image:
+    linear-gradient(45deg, #e4e4e7 25%, transparent 25%),
+    linear-gradient(-45deg, #e4e4e7 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #e4e4e7 75%),
+    linear-gradient(-45deg, transparent 75%, #e4e4e7 75%);
+  background-position:
+    0 0,
+    0 10px,
+    10px -10px,
+    -10px 0;
+  background-size: 20px 20px;
 }

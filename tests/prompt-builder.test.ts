@@ -41,14 +41,15 @@ describe("buildPrompt", () => {
   it("builds a game-ready prompt from a valid request", () => {
     const prompt = buildPrompt(baseRequest);
 
-    expect(prompt.positivePrompt).toContain("pixel art style");
-    expect(prompt.positivePrompt).toContain("2D game character asset");
+    expect(prompt.positivePrompt).toContain("像素风");
+    expect(prompt.positivePrompt).toContain("pixel art");
+    expect(prompt.positivePrompt).toContain("2D 游戏角色素材");
     expect(prompt.positivePrompt).toContain("Fire slime monster");
-    expect(prompt.positivePrompt).toContain("front view");
-    expect(prompt.positivePrompt).toContain("transparent background");
-    expect(prompt.negativePrompt).toContain("text");
-    expect(prompt.negativePrompt).toContain("watermark");
-    expect(prompt.negativePrompt).toContain("blurry");
+    expect(prompt.positivePrompt).toContain("正面视角");
+    expect(prompt.positivePrompt).toContain("透明背景");
+    expect(prompt.negativePrompt).toContain("文字");
+    expect(prompt.negativePrompt).toContain("水印");
+    expect(prompt.negativePrompt).toContain("模糊");
   });
 
   it("uses different template content for different asset types", () => {
@@ -65,9 +66,9 @@ describe("buildPrompt", () => {
       assetType: "tile"
     }).positivePrompt;
 
-    expect(characterPrompt).toContain("full body");
-    expect(itemPrompt).toContain("inventory-ready asset");
-    expect(tilePrompt).toContain("tilemap workflow");
+    expect(characterPrompt).toContain("完整身体");
+    expect(itemPrompt).toContain("适合背包或掉落物");
+    expect(tilePrompt).toContain("tilemap 工作流");
     expect(new Set([characterPrompt, itemPrompt, tilePrompt]).size).toBe(3);
   });
 
@@ -84,11 +85,12 @@ describe("buildPrompt", () => {
       }
     });
 
-    expect(prompt.positivePrompt).toContain("Crystal Dungeon");
-    expect(prompt.positivePrompt).toContain("cyan, violet, deep navy");
-    expect(prompt.positivePrompt).toContain("thin bright outline");
-    expect(prompt.positivePrompt).toContain("strict front-facing sprites");
+    expect(prompt.positivePrompt).toContain("项目风格参考：Crystal Dungeon");
+    expect(prompt.positivePrompt).toContain("配色方案：cyan, violet, deep navy");
+    expect(prompt.positivePrompt).toContain("线条风格：thin bright outline");
+    expect(prompt.positivePrompt).toContain("项目视角规则：strict front-facing sprites");
     expect(prompt.negativePrompt).toContain("modern weapons");
+    expect(prompt.appliedStyleProfile).toContain("避免元素：modern weapons");
     expect(prompt.appliedStyleProfile.length).toBeGreaterThan(0);
   });
 });
