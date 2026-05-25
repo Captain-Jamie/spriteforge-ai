@@ -56,7 +56,11 @@ export async function POST(request: Request) {
 }
 
 function getGenerationErrorStatus(message: string) {
-  if (message.includes("DASHSCOPE_API_KEY") || message.includes("IMAGE_MODEL")) {
+  if (
+    message.includes("DASHSCOPE_API_KEY") ||
+    message.includes("IMAGE_MODEL") ||
+    message.includes("ALIYUN_VIAPI_CREDENTIALS")
+  ) {
     return 503;
   }
 
@@ -65,6 +69,10 @@ function getGenerationErrorStatus(message: string) {
   }
 
   if (message.includes("DashScope")) {
+    return 502;
+  }
+
+  if (message.includes("Aliyun image segmentation")) {
     return 502;
   }
 

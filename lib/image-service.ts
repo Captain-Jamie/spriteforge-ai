@@ -1,4 +1,5 @@
 import type { GenerateAssetRequest, GeneratedImage, PromptBuildResult } from "./asset-schema";
+import { removeImageBackground } from "./background-removal-service";
 import { createMockImages } from "./mock-assets";
 
 export type ImageGenerationMode = "mock" | "real";
@@ -26,7 +27,10 @@ export async function generateImages({
   }
 
   return {
-    images: await generateDashScopeImages(request, prompt),
+    images: await applyBackgroundPostProcessing(
+      await generateDashScopeImages(request, prompt),
+      request
+    ),
     mode: "real"
   };
 }
@@ -83,6 +87,17 @@ async function generateDashScopeImages(
   }
 
   throw new Error("DashScope image generation succeeded but returned no image URL.");
+}
+
+async function applyBackgroundPostProcessing(
+  images: GeneratedImage[],
+  request: GenerateAssetRequest
+) {
+  if (request.background !== "transparent") {
+    return images;
+  }
+
+  return Promise.all(images.map((image) => removeImageBackground(image)));
 }
 
 function buildDashScopeRequestBody(
