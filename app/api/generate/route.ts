@@ -23,10 +23,13 @@ export async function POST(request: Request) {
     const prompt = buildPrompt(assetRequest);
     const { images, mode } = await generateImages({ request: assetRequest, prompt });
     const createdAt = new Date().toISOString();
+    const batchId = `batch_${Date.now().toString(36)}`;
+    const batchCode = batchId.replace("batch_", "").slice(-6);
 
     const assets: AssetRecord[] = images.map((image, index) => ({
       id: `asset_${Date.now()}_${index + 1}`,
-      name: buildAssetName(assetRequest.description, index),
+      batchId,
+      name: buildAssetName(assetRequest.description, index, batchCode),
       assetType: assetRequest.assetType,
       style: assetRequest.style,
       gameGenre: assetRequest.gameGenre,
@@ -68,7 +71,7 @@ function getGenerationErrorStatus(message: string) {
   return 500;
 }
 
-function buildAssetName(description: string, index: number) {
+function buildAssetName(description: string, index: number, batchCode: string) {
   const slug = description
     .trim()
     .toLowerCase()
@@ -76,5 +79,5 @@ function buildAssetName(description: string, index: number) {
     .replace(/^_+|_+$/g, "")
     .slice(0, 40);
 
-  return `${slug || "asset"}_${index + 1}`;
+  return `${slug || "asset"}_${index + 1}_${batchCode}`;
 }

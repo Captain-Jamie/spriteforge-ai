@@ -37,6 +37,7 @@ export const PromptBuildResultSchema = z.object({
 
 export const AssetRecordSchema = z.object({
   id: z.string().min(1),
+  batchId: z.string().min(1).optional(),
   name: z.string().min(1),
   assetType: z.enum(ASSET_TYPES),
   style: z.enum(ART_STYLES),

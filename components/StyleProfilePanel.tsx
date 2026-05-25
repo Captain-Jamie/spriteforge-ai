@@ -1,8 +1,9 @@
-import { Palette, RotateCcw } from "lucide-react";
+import { Palette, RotateCcw, X } from "lucide-react";
 import type { StyleProfile } from "@/lib/asset-schema";
 
 type StyleProfilePanelProps = {
   appliedCount: number;
+  onClose?: () => void;
   onReset: () => void;
   onUpdateField: (field: keyof StyleProfile, value: string) => void;
   styleProfile: StyleProfile;
@@ -10,35 +11,46 @@ type StyleProfilePanelProps = {
 
 export function StyleProfilePanel({
   appliedCount,
+  onClose,
   onReset,
   onUpdateField,
   styleProfile
 }: StyleProfilePanelProps) {
   return (
-    <section className="rounded-lg border border-zinc-200 bg-white p-4 shadow-sm shadow-zinc-200/70">
-      <div className="mb-4 flex items-center justify-between gap-3">
+    <section className="overflow-hidden rounded-lg border border-zinc-300 bg-white shadow-sm shadow-zinc-300/80">
+      <div className="flex items-center justify-between gap-3 border-b border-zinc-200 bg-[#181b1f] px-4 py-3 text-white">
         <div className="flex items-center gap-2">
-          <Palette size={18} className="text-amber-700" aria-hidden="true" />
+          <Palette size={18} className="text-amber-300" aria-hidden="true" />
           <div>
-            <h2 className="text-base font-semibold text-zinc-950">项目风格档案</h2>
-            <p className="mt-1 text-sm text-zinc-600">自动保存，并注入素材生成 Prompt</p>
+            <h2 className="text-base font-semibold">项目风格档案</h2>
+            <p className="mt-0.5 text-xs text-zinc-400">自动保存并注入 Prompt</p>
           </div>
         </div>
-        <button
-          aria-label="重置风格档案"
-          className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-zinc-300 text-zinc-600 transition hover:border-amber-500 hover:text-amber-700"
-          onClick={onReset}
-          type="button"
-        >
-          <RotateCcw size={16} aria-hidden="true" />
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            aria-label="重置风格档案"
+            className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-zinc-700 bg-zinc-900 text-zinc-300 transition hover:border-amber-300 hover:text-amber-200"
+            onClick={onReset}
+            type="button"
+          >
+            <RotateCcw size={16} aria-hidden="true" />
+          </button>
+          {onClose ? (
+            <button
+              aria-label="关闭风格档案"
+              className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-zinc-700 bg-zinc-900 text-zinc-300 transition hover:border-zinc-500 hover:text-white"
+              onClick={onClose}
+              type="button"
+            >
+              <X size={16} aria-hidden="true" />
+            </button>
+          ) : null}
+        </div>
       </div>
-      <div className="mb-4 rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-900">
-        {appliedCount > 0
-          ? `${appliedCount} 条风格规则生效`
-          : "尚未设置风格规则"}
+      <div className="border-b border-amber-200 bg-amber-50 px-4 py-2 text-sm text-amber-900">
+        {appliedCount > 0 ? `${appliedCount} 条风格规则生效` : "尚未设置风格规则"}
       </div>
-      <div className="grid gap-3">
+      <div className="grid gap-3 p-4">
         <StyleInput
           field="projectName"
           label="项目名称"
@@ -101,9 +113,9 @@ function StyleInput({
 }) {
   return (
     <label className="block">
-      <span className="text-sm font-medium text-zinc-800">{label}</span>
+      <span className="text-xs font-semibold text-zinc-600">{label}</span>
       <input
-        className="mt-1 h-10 w-full rounded-md border border-zinc-300 bg-white px-3 text-sm text-zinc-800 outline-none transition focus:border-amber-600 focus:ring-2 focus:ring-amber-100"
+        className="mt-1 h-9 w-full rounded-md border border-zinc-300 bg-[#fbfbf8] px-3 text-sm text-zinc-800 outline-none transition focus:border-amber-600 focus:bg-white focus:ring-2 focus:ring-amber-100"
         onChange={(event) => onUpdateField(field, event.target.value)}
         placeholder={placeholder}
         value={value}

@@ -4,9 +4,9 @@ import { ART_STYLE_LABELS, ASSET_TYPE_LABELS } from "@/lib/constants";
 import { buildAssetFileName, copyToClipboard, downloadUrl } from "@/lib/file-utils";
 
 const toneClasses = {
-  teal: "border-teal-200 bg-teal-50 text-teal-800",
-  amber: "border-amber-200 bg-amber-50 text-amber-800",
-  sky: "border-sky-200 bg-sky-50 text-sky-800"
+  teal: "border-teal-200 text-teal-800",
+  amber: "border-amber-200 text-amber-800",
+  sky: "border-sky-200 text-sky-800"
 };
 
 type AssetCardProps = {
@@ -38,21 +38,21 @@ export function AssetCard({
 
   return (
     <article
-      className={`overflow-hidden rounded-lg border bg-white transition ${
+      className={`group overflow-hidden rounded-md border bg-white transition ${
         isSelected
-          ? "border-teal-600 shadow-sm ring-2 ring-teal-100"
+          ? "border-teal-500 shadow-sm shadow-teal-950/10 ring-2 ring-teal-100"
           : isFocused
-            ? "border-zinc-800 shadow-sm ring-2 ring-zinc-200"
-            : "border-zinc-200 hover:border-zinc-300"
+            ? "border-zinc-900 shadow-sm shadow-zinc-950/10 ring-2 ring-zinc-200"
+            : "border-zinc-200 hover:border-zinc-400 hover:shadow-sm"
       }`}
     >
       <button
-        className="flex aspect-square w-full items-center justify-center bg-[linear-gradient(45deg,#f4f4f5_25%,transparent_25%),linear-gradient(-45deg,#f4f4f5_25%,transparent_25%),linear-gradient(45deg,transparent_75%,#f4f4f5_75%),linear-gradient(-45deg,transparent_75%,#f4f4f5_75%)] bg-[length:20px_20px] bg-[position:0_0,0_10px,10px_-10px,-10px_0px] p-4"
+        className="mini-checker flex aspect-[4/3] w-full items-center justify-center border-b border-zinc-200 p-2"
         onClick={onFocus}
         type="button"
       >
         <div
-          className={`flex h-full max-h-44 w-full max-w-44 items-center justify-center rounded-md border ${toneClasses[tone]}`}
+          className={`flex h-full max-h-28 w-full max-w-28 items-center justify-center rounded-md border bg-transparent shadow-sm transition group-hover:scale-[1.02] ${toneClasses[tone]}`}
         >
           {asset.imageUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
@@ -62,15 +62,15 @@ export function AssetCard({
           )}
         </div>
       </button>
-      <div className="space-y-3 p-3">
+      <div className="space-y-2 p-2.5">
         <div className="flex items-start justify-between gap-2">
-          <div>
-            <h3 className="text-sm font-semibold text-zinc-950">{asset.name}</h3>
-            <p className="mt-1 text-xs text-zinc-500">
+          <div className="min-w-0">
+            <h3 className="truncate text-xs font-semibold text-zinc-950">{asset.name}</h3>
+            <p className="mt-0.5 truncate text-[11px] text-zinc-500">
               {ASSET_TYPE_LABELS[asset.assetType]} · {ART_STYLE_LABELS[asset.style]} · {asset.size}
             </p>
             {isFocused ? (
-              <p className="mt-1 text-xs font-medium text-zinc-900">当前预览</p>
+              <span className="sr-only">当前预览</span>
             ) : null}
           </div>
           <button
@@ -87,30 +87,30 @@ export function AssetCard({
             <span className="sr-only">选择素材</span>
           </button>
         </div>
-        <div className="grid grid-cols-3 gap-2">
+        <div className="grid grid-cols-3 gap-1">
           <button
-            className="inline-flex h-9 items-center justify-center gap-2 rounded-md border border-zinc-300 text-sm font-medium text-zinc-700 hover:bg-zinc-50"
+            className="inline-flex h-7 items-center justify-center gap-1.5 rounded-md border border-zinc-300 text-xs font-medium text-zinc-700 hover:border-zinc-400 hover:bg-zinc-50"
             onClick={handleDownload}
             type="button"
           >
             <Download size={15} aria-hidden="true" />
-            <span className="sr-only sm:not-sr-only">PNG</span>
+            <span className="sr-only">PNG</span>
           </button>
           <button
-            className="inline-flex h-9 items-center justify-center gap-2 rounded-md border border-zinc-300 text-sm font-medium text-zinc-700 hover:bg-zinc-50"
+            className="inline-flex h-7 items-center justify-center gap-1.5 rounded-md border border-zinc-300 text-xs font-medium text-zinc-700 hover:border-zinc-400 hover:bg-zinc-50"
             onClick={handleCopyPrompt}
             type="button"
           >
             <Clipboard size={15} aria-hidden="true" />
-            <span className="sr-only sm:not-sr-only">Prompt</span>
+            <span className="sr-only">Prompt</span>
           </button>
           <button
-            className="inline-flex h-9 items-center justify-center gap-2 rounded-md border border-red-200 text-sm font-medium text-red-700 hover:bg-red-50"
+            className="inline-flex h-7 items-center justify-center gap-1.5 rounded-md border border-red-200 text-xs font-medium text-red-700 hover:border-red-300 hover:bg-red-50"
             onClick={onRemove}
             type="button"
           >
             <Trash2 size={15} aria-hidden="true" />
-            <span className="sr-only sm:not-sr-only">删除</span>
+            <span className="sr-only">删除</span>
           </button>
         </div>
       </div>

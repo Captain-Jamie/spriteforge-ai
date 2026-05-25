@@ -111,7 +111,8 @@ export const VIEW_PROMPT_PARTS: Record<(typeof ASSET_VIEWS)[number], string> = {
 };
 
 export const BACKGROUND_PROMPT_PARTS: Record<(typeof BACKGROUND_MODES)[number], string> = {
-  transparent: "透明背景，transparent background，独立素材，无场景背景",
+  transparent:
+    "透明背景，transparent PNG，alpha channel，独立素材，背景必须完全透明，不要白底，不要棋盘格",
   solid: "纯色背景，plain solid color background，便于抠图",
   scene: "简洁游戏场景背景，simple game scene background，构图不拥挤"
 };
