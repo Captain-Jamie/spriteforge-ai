@@ -2,6 +2,12 @@
 
 import { useEffect, useMemo, useState } from "react";
 import type { AssetRecord } from "@/lib/asset-schema";
+import {
+  cacheAssetImages,
+  clearCachedAssetImages,
+  deleteCachedAssetImages,
+  hydrateAssetsWithCachedImages
+} from "@/lib/asset-image-cache";
 import { clearStoredAssets, loadAssets, saveAssets } from "@/lib/asset-storage";
 
 export function useAssets() {
@@ -13,6 +19,10 @@ export function useAssets() {
     const storedAssets = loadAssets();
     setAssets(storedAssets);
     setHasHydrated(true);
+
+    hydrateAssetsWithCachedImages(storedAssets).then((hydratedAssets) => {
+      setAssets(hydratedAssets);
+    });
   }, []);
 
   useEffect(() => {
@@ -30,17 +40,20 @@ export function useAssets() {
 
   function addAssets(newAssets: AssetRecord[]) {
     setAssets((currentAssets) => [...newAssets, ...currentAssets]);
+    cacheAssetImages(newAssets);
   }
 
   function removeAsset(assetId: string) {
     setAssets((currentAssets) => currentAssets.filter((asset) => asset.id !== assetId));
     setSelectedAssetIds((currentIds) => currentIds.filter((id) => id !== assetId));
+    deleteCachedAssetImages([assetId]);
   }
 
   function clearAssets() {
     setAssets([]);
     setSelectedAssetIds([]);
     clearStoredAssets();
+    clearCachedAssetImages();
   }
 
   function toggleSelectAsset(assetId: string) {

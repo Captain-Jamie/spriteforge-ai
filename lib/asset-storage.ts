@@ -31,7 +31,7 @@ export function saveAssets(assets: AssetRecord[]) {
     return;
   }
 
-  window.localStorage.setItem(ASSETS_STORAGE_KEY, JSON.stringify(assets));
+  window.localStorage.setItem(ASSETS_STORAGE_KEY, JSON.stringify(assets.map(toStoredAsset)));
 }
 
 export function clearStoredAssets() {
@@ -40,6 +40,16 @@ export function clearStoredAssets() {
   }
 
   window.localStorage.removeItem(ASSETS_STORAGE_KEY);
+}
+
+function toStoredAsset(asset: AssetRecord): AssetRecord {
+  const sourceImageUrl = asset.sourceImageUrl ?? asset.imageUrl;
+
+  return {
+    ...asset,
+    imageUrl: sourceImageUrl,
+    sourceImageUrl
+  };
 }
 
 export function loadStyleProfile(): StyleProfile {

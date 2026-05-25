@@ -2,7 +2,10 @@ import { expect, test } from "@playwright/test";
 
 test("generates mock assets and prompt from the request form", async ({ page }) => {
   await page.goto("/");
-  await page.evaluate(() => window.localStorage.clear());
+  await page.evaluate(() => {
+    window.localStorage.clear();
+    window.indexedDB.deleteDatabase("spriteforge.asset-cache.v1");
+  });
   await page.reload();
 
   await expect(page.getByRole("heading", { name: "SpriteForge AI" })).toBeVisible();

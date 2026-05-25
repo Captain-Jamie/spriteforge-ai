@@ -12,6 +12,7 @@ SpriteForge AI 是一个面向独立游戏开发者和小型游戏团队的 2D �
 - 真实 API 生图：支持通过阿里云百炼 DashScope 图像生成接口返回真实素材。
 - 透明背景后处理：透明背景素材会调用阿里云视觉智能开放平台通用分割，输出真实 alpha PNG。
 - 本地素材库：支持生成结果持久化、选择、删除、复制 Prompt 和单图下载。
+- 本地图片缓存：生成后的素材图片会写入浏览器 IndexedDB，减少真实 API 临时图片链接过期导致的预览失效。
 - ZIP 导出：导出 `assets/`、`metadata.json` 和 `prompts.json`，真实 API 返回的远程图片会在服务端下载后写入 ZIP。
 - Sprite Sheet 导出：将已选素材拼接为透明 PNG 帧表，并导出 `frames.json` 坐标数据。
 - Mock 测试模式：仅在显式开启时用于本地自动化测试，避免消耗真实 API 额度。

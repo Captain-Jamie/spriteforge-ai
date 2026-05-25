@@ -170,45 +170,45 @@ export function AssetGallery({
 
   return (
     <section className="overflow-hidden rounded-lg border border-zinc-300 bg-white shadow-sm shadow-zinc-300/80">
-      <div className="border-b border-zinc-200 bg-white px-3 py-2">
-        <div className="mb-2 flex items-center justify-between gap-2">
-          <div className="flex items-center gap-2">
-            <h2 className="text-sm font-semibold text-zinc-950">素材库</h2>
-            <span className="text-xs text-zinc-500">{assets.length} 个素材</span>
-          </div>
-          <div className="flex items-center gap-1">
-            <button
-              aria-label="全选当前展示素材"
-              className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-zinc-300 bg-white text-zinc-600 hover:bg-zinc-50"
-              disabled={visibleAssets.length === 0}
-              onClick={handleSelectVisibleAssets}
-              title="全选当前展示素材"
-              type="button"
-            >
-              <CheckSquare size={15} aria-hidden="true" />
-            </button>
-            <button
-              aria-label="导出 Sprite Sheet"
-              className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-zinc-300 bg-white text-zinc-600 hover:bg-zinc-50 disabled:border-zinc-200 disabled:text-zinc-300 disabled:hover:bg-white"
-              disabled={!canExportSpriteSheet || isSpriteSheetExporting}
-              onClick={handleExportSpriteSheet}
-              title={canExportSpriteSheet ? "导出 Sprite Sheet" : "选择至少 2 个素材后可导出 Sprite Sheet"}
-              type="button"
-            >
-              <Grid2X2 size={15} aria-hidden="true" />
-            </button>
-            <button
-              aria-label="删除已选素材"
-              className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-red-200 bg-white text-red-600 hover:bg-red-50 disabled:border-zinc-200 disabled:text-zinc-300 disabled:hover:bg-white"
-              disabled={selectedAssetIds.length === 0}
-              onClick={() => setIsDeleteSelectedDialogOpen(true)}
-              title={selectedAssetIds.length > 0 ? "删除已选素材" : "选择素材后可批量删除"}
-              type="button"
-            >
-              <Trash2 size={15} aria-hidden="true" />
-            </button>
-          </div>
+      <div className="flex items-center justify-between gap-3 border-b border-zinc-200 bg-[#f7f7f4] px-4 py-3">
+        <div>
+          <h2 className="text-base font-semibold text-zinc-950">素材库</h2>
+          <p className="mt-0.5 text-xs text-zinc-500">{assets.length} 个素材 · 资源管理与交付</p>
         </div>
+        <div className="flex items-center gap-1">
+          <button
+            aria-label="全选当前展示素材"
+            className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-zinc-300 bg-white text-zinc-600 hover:bg-zinc-50 disabled:border-zinc-200 disabled:text-zinc-300 disabled:hover:bg-white"
+            disabled={visibleAssets.length === 0}
+            onClick={handleSelectVisibleAssets}
+            title="全选当前展示素材"
+            type="button"
+          >
+            <CheckSquare size={15} aria-hidden="true" />
+          </button>
+          <button
+            aria-label="导出 Sprite Sheet"
+            className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-zinc-300 bg-white text-zinc-600 hover:bg-zinc-50 disabled:border-zinc-200 disabled:text-zinc-300 disabled:hover:bg-white"
+            disabled={!canExportSpriteSheet || isSpriteSheetExporting}
+            onClick={handleExportSpriteSheet}
+            title={canExportSpriteSheet ? "导出 Sprite Sheet" : "选择至少 2 个素材后可导出 Sprite Sheet"}
+            type="button"
+          >
+            <Grid2X2 size={15} aria-hidden="true" />
+          </button>
+          <button
+            aria-label="删除已选素材"
+            className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-red-200 bg-white text-red-600 hover:bg-red-50 disabled:border-zinc-200 disabled:text-zinc-300 disabled:hover:bg-white"
+            disabled={selectedAssetIds.length === 0}
+            onClick={() => setIsDeleteSelectedDialogOpen(true)}
+            title={selectedAssetIds.length > 0 ? "删除已选素材" : "选择素材后可批量删除"}
+            type="button"
+          >
+            <Trash2 size={15} aria-hidden="true" />
+          </button>
+        </div>
+      </div>
+      <div className="border-b border-zinc-200 bg-white px-3 py-2">
         <div className="flex items-center gap-2">
           <button
             className={buttonClass(viewMode === "all")}
@@ -380,7 +380,6 @@ export function AssetGallery({
           <div className="w-full max-w-md overflow-hidden rounded-lg border border-zinc-300 bg-white shadow-xl shadow-zinc-950/25">
             <div className="border-b border-zinc-200 bg-[#f7f7f4] px-4 py-3">
               <h3 className="text-base font-semibold text-zinc-950">确认删除已选素材</h3>
-              <p className="mt-1 text-sm text-zinc-600">该操作只会删除当前已选素材，不会清空整个素材库。</p>
             </div>
             <div className="space-y-4 p-4">
               <div className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800">

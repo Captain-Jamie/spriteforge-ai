@@ -48,6 +48,7 @@ export const AssetRecordSchema = z.object({
   prompt: z.string().min(1),
   negativePrompt: z.string().min(1),
   imageUrl: z.string().min(1),
+  sourceImageUrl: z.string().min(1).optional(),
   createdAt: z.string().min(1)
 });
 
