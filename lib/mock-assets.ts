@@ -43,8 +43,7 @@ export function createMockImages(assetType: AssetType, count: number): Generated
 function createMockSvgDataUrl(assetType: AssetType, index: number) {
   const palette = MOCK_COLORS[assetType];
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
-  <rect width="512" height="512" rx="36" fill="${palette.fill}"/>
-  <rect x="74" y="74" width="364" height="364" rx="28" fill="#ffffff" stroke="${palette.accent}" stroke-width="18"/>
+  <rect x="88" y="88" width="336" height="336" rx="34" fill="none" stroke="${palette.accent}" stroke-width="18"/>
   <circle cx="256" cy="218" r="76" fill="${palette.fill}" stroke="${palette.accent}" stroke-width="16"/>
   <path d="M154 354c56-62 148-62 204 0" fill="none" stroke="${palette.accent}" stroke-width="22" stroke-linecap="round"/>
   <text x="256" y="454" text-anchor="middle" font-family="Arial, sans-serif" font-size="42" font-weight="700" fill="${palette.accent}">${palette.label} ${index + 1}</text>

@@ -68,6 +68,9 @@ export function buildPrompt(request: GenerateAssetRequest): PromptBuildResult {
   const negativeParts = compactParts([
     ...BASE_NEGATIVE_PROMPT_PARTS,
     request.background !== "scene" && "杂乱场景背景",
+    request.background === "transparent" && "白色背景",
+    request.background === "transparent" && "假透明背景",
+    request.background === "transparent" && "棋盘格背景",
     ...styleProfileParts.negativeParts
   ]);
 

@@ -1,37 +1,29 @@
 "use client";
 
-import { Check, Clipboard, Download, ImageIcon, Trash2 } from "lucide-react";
+import { Braces, Download, ImageIcon } from "lucide-react";
 import type { AssetRecord } from "@/lib/asset-schema";
 import {
   ART_STYLE_LABELS,
   ASSET_TYPE_LABELS,
-  BACKGROUND_LABELS,
-  GAME_GENRE_LABELS,
-  VIEW_LABELS
+  BACKGROUND_LABELS
 } from "@/lib/constants";
-import { buildAssetFileName, copyToClipboard, downloadUrl } from "@/lib/file-utils";
+import { buildAssetFileName, downloadUrl } from "@/lib/file-utils";
 
 type CurrentPreviewProps = {
   asset?: AssetRecord | null;
-  isSelected: boolean;
-  onRemove?: () => void;
-  onToggleSelect?: () => void;
+  assets?: AssetRecord[];
+  focusedAssetId?: string | null;
+  onFocusAsset?: (assetId: string) => void;
+  onOpenPrompt?: () => void;
 };
 
 export function CurrentPreview({
   asset,
-  isSelected,
-  onRemove,
-  onToggleSelect
+  assets = [],
+  focusedAssetId,
+  onFocusAsset,
+  onOpenPrompt
 }: CurrentPreviewProps) {
-  async function handleCopyPrompt() {
-    if (!asset) {
-      return;
-    }
-
-    await copyToClipboard(asset.prompt);
-  }
-
   function handleDownload() {
     if (!asset) {
       return;
@@ -40,12 +32,18 @@ export function CurrentPreview({
     downloadUrl(asset.imageUrl, buildAssetFileName(asset));
   }
 
+  const batchAssets = asset
+    ? assets.filter((item) =>
+        asset.batchId ? item.batchId === asset.batchId : item.createdAt === asset.createdAt
+      )
+    : [];
+
   return (
-    <section className="rounded-lg border border-zinc-200 bg-white p-4 shadow-sm shadow-zinc-200/70">
-      <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+    <section className="overflow-hidden rounded-lg border border-zinc-300 bg-white shadow-sm shadow-zinc-300/80">
+      <div className="flex flex-col gap-3 border-b border-zinc-200 bg-[#f7f7f4] px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h2 className="text-base font-semibold text-zinc-950">当前生成结果</h2>
-          <p className="mt-1 text-sm text-zinc-600">
+          <h2 className="text-base font-semibold text-zinc-950">素材详情</h2>
+          <p className="mt-0.5 text-xs text-zinc-500">
             {asset ? "查看当前聚焦素材的预览与交付信息" : "生成或点击素材后，这里会显示主预览"}
           </p>
         </div>
@@ -55,61 +53,59 @@ export function CurrentPreview({
               <Download size={16} aria-hidden="true" />
               下载
             </button>
-            <button className={actionButtonClass()} onClick={handleCopyPrompt} type="button">
-              <Clipboard size={16} aria-hidden="true" />
-              复制 Prompt
-            </button>
+            {onOpenPrompt ? (
+              <button className={actionButtonClass()} onClick={onOpenPrompt} type="button">
+                <Braces size={16} aria-hidden="true" />
+                查看Prompt
+              </button>
+            ) : null}
           </div>
         ) : null}
       </div>
 
       {asset ? (
-        <div className="grid gap-4 lg:grid-cols-[minmax(260px,1fr)_260px]">
-          <div className="flex min-h-[420px] items-center justify-center rounded-lg border border-zinc-200 bg-[linear-gradient(45deg,#f4f4f5_25%,transparent_25%),linear-gradient(-45deg,#f4f4f5_25%,transparent_25%),linear-gradient(45deg,transparent_75%,#f4f4f5_75%),linear-gradient(-45deg,transparent_75%,#f4f4f5_75%)] bg-[length:24px_24px] bg-[position:0_0,0_12px,12px_-12px,-12px_0px] p-6">
-            <div className="flex h-full max-h-[360px] w-full max-w-[360px] items-center justify-center rounded-lg border border-zinc-200 bg-white p-4 shadow-sm">
+        <div>
+          <div className="border-b border-zinc-200 bg-[#171a1d] p-3">
+            <div className="mb-3 flex flex-wrap items-center justify-between gap-2 text-xs text-zinc-300">
+              <span className="rounded-md border border-zinc-700 bg-zinc-900 px-2 py-1">预览画布</span>
+              <div className="flex flex-wrap gap-1.5">
+                <Badge>{ASSET_TYPE_LABELS[asset.assetType]}</Badge>
+                <Badge>{ART_STYLE_LABELS[asset.style]}</Badge>
+                <Badge>{asset.size}</Badge>
+                <Badge>{BACKGROUND_LABELS[asset.background]}</Badge>
+              </div>
+            </div>
+            <div className="canvas-checker flex min-h-[430px] items-center justify-center rounded-md border border-zinc-700 p-6 shadow-inner">
+              <div className="flex h-full max-h-[380px] w-full max-w-[380px] items-center justify-center bg-transparent p-0">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img alt={asset.name} className="h-full w-full object-contain" src={asset.imageUrl} />
+                <img alt={asset.name} className="h-full w-full object-contain" src={asset.imageUrl} />
+              </div>
             </div>
           </div>
-          <div className="space-y-3">
-            <div>
-              <h3 className="break-words text-lg font-semibold leading-6 text-zinc-950">{asset.name}</h3>
-              <p className="mt-1 text-sm text-zinc-500">{new Date(asset.createdAt).toLocaleString()}</p>
+          <div className="space-y-3 bg-[#fbfbf8] p-3">
+            {batchAssets.length > 0 ? (
+              <div className="flex gap-2 overflow-x-auto rounded-md border border-zinc-200 bg-white p-2">
+                {batchAssets.map((item) => (
+                  <button
+                    className={`mini-checker flex h-16 w-16 shrink-0 items-center justify-center rounded-md border p-1 transition ${
+                      (focusedAssetId ?? asset.id) === item.id
+                        ? "border-teal-600 ring-2 ring-teal-100"
+                        : "border-zinc-200 hover:border-zinc-400"
+                    }`}
+                    key={item.id}
+                    onClick={() => onFocusAsset?.(item.id)}
+                    type="button"
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img alt={item.name} className="h-full w-full object-contain" src={item.imageUrl} />
+                  </button>
+                ))}
+              </div>
+            ) : null}
             </div>
-            <div className="grid gap-2">
-              <MetadataItem label="素材类型" value={ASSET_TYPE_LABELS[asset.assetType]} />
-              <MetadataItem label="美术风格" value={ART_STYLE_LABELS[asset.style]} />
-              <MetadataItem label="游戏类型" value={GAME_GENRE_LABELS[asset.gameGenre]} />
-              <MetadataItem label="视角" value={VIEW_LABELS[asset.view]} />
-              <MetadataItem label="尺寸" value={asset.size} />
-              <MetadataItem label="背景" value={BACKGROUND_LABELS[asset.background]} />
-            </div>
-            <div className="grid gap-2 pt-2">
-              <button
-                className={
-                  isSelected
-                    ? "inline-flex h-10 items-center justify-center gap-2 rounded-md border border-teal-700 bg-teal-700 px-3 text-sm font-semibold text-white"
-                    : "inline-flex h-10 items-center justify-center gap-2 rounded-md border border-zinc-300 bg-white px-3 text-sm font-semibold text-zinc-700 hover:bg-zinc-50"
-                }
-                onClick={onToggleSelect}
-                type="button"
-              >
-                <Check size={16} aria-hidden="true" />
-                {isSelected ? "已加入导出选择" : "加入导出选择"}
-              </button>
-              <button
-                className="inline-flex h-10 items-center justify-center gap-2 rounded-md border border-red-200 bg-white px-3 text-sm font-semibold text-red-700 hover:bg-red-50"
-                onClick={onRemove}
-                type="button"
-              >
-                <Trash2 size={16} aria-hidden="true" />
-                删除素材
-              </button>
-            </div>
-          </div>
         </div>
       ) : (
-        <div className="grid min-h-[420px] place-items-center rounded-lg border border-dashed border-zinc-300 bg-zinc-50 p-6 text-center">
+        <div className="canvas-checker m-3 grid min-h-[430px] place-items-center rounded-md border border-dashed border-zinc-400 p-6 text-center">
           <div>
             <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-lg border border-zinc-300 bg-white text-zinc-500 shadow-sm">
               <ImageIcon size={28} aria-hidden="true" />
@@ -125,15 +121,14 @@ export function CurrentPreview({
   );
 }
 
-function MetadataItem({ label, value }: { label: string; value: string }) {
+function Badge({ children }: { children: string }) {
   return (
-    <div className="flex items-center justify-between gap-3 rounded-md border border-zinc-200 bg-zinc-50 px-3 py-2 text-sm">
-      <span className="text-zinc-500">{label}</span>
-      <span className="font-medium text-zinc-900">{value}</span>
-    </div>
+    <span className="rounded-md border border-zinc-700 bg-zinc-900 px-2 py-1 text-zinc-200">
+      {children}
+    </span>
   );
 }
 
 function actionButtonClass() {
-  return "inline-flex h-9 items-center justify-center gap-2 rounded-md border border-zinc-300 bg-white px-3 text-sm font-medium text-zinc-700 hover:bg-zinc-50";
+  return "inline-flex h-9 items-center justify-center gap-2 rounded-md border border-zinc-300 bg-white px-3 text-sm font-medium text-zinc-700 shadow-sm hover:border-zinc-400 hover:bg-zinc-50";
 }
