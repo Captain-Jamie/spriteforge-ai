@@ -2,14 +2,15 @@
 
 import { Archive, FileJson, FolderDown } from "lucide-react";
 import { useMemo, useState } from "react";
-import type { AssetRecord } from "@/lib/asset-schema";
+import type { AssetRecord, StyleProfile } from "@/lib/asset-schema";
 
 type ExportPanelProps = {
   assets: AssetRecord[];
   selectedAssets: AssetRecord[];
+  styleProfile?: StyleProfile;
 };
 
-export function ExportPanel({ assets, selectedAssets }: ExportPanelProps) {
+export function ExportPanel({ assets, selectedAssets, styleProfile }: ExportPanelProps) {
   const [error, setError] = useState<string | null>(null);
   const [isExporting, setIsExporting] = useState(false);
   const exportAssets = selectedAssets.length > 0 ? selectedAssets : assets;
@@ -38,7 +39,7 @@ export function ExportPanel({ assets, selectedAssets }: ExportPanelProps) {
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({ assets: exportAssets })
+        body: JSON.stringify({ assets: exportAssets, styleProfile })
       });
 
       if (!response.ok) {
