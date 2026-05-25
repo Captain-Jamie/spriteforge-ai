@@ -16,7 +16,7 @@ export function AppHeader() {
         <div className="flex flex-wrap items-center gap-2 text-sm">
           <span className="inline-flex items-center gap-2 rounded-md border border-teal-200 bg-teal-50 px-3 py-2 text-teal-900">
             <CircleCheck size={16} aria-hidden="true" />
-            Mock mode ready
+            API-ready pipeline
           </span>
           <span className="inline-flex items-center gap-2 rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-amber-900">
             <Database size={16} aria-hidden="true" />
