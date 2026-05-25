@@ -1,22 +1,30 @@
 import { Braces } from "lucide-react";
+import type { GenerateAssetRequest } from "@/lib/asset-schema";
 
-export function PromptPreview() {
+type PromptPreviewProps = {
+  request?: GenerateAssetRequest | null;
+};
+
+export function PromptPreview({ request }: PromptPreviewProps) {
   return (
     <section className="rounded-lg border border-zinc-200 bg-white p-4 shadow-sm">
       <div className="mb-3 flex items-center gap-2">
         <Braces size={18} className="text-teal-700" aria-hidden="true" />
         <h2 className="text-base font-semibold text-zinc-950">Prompt Preview</h2>
       </div>
-      <div className="space-y-3">
-        <PromptBlock
-          label="Positive"
-          text="pixel art style, 2D game character asset, Fire slime monster, front view, transparent background, target size 128x128, game-ready asset"
-        />
-        <PromptBlock
-          label="Negative"
-          text="text, watermark, logo, blurry, realistic photo, complex background, cropped subject, inconsistent style"
-        />
-      </div>
+      {request ? (
+        <div className="space-y-3">
+          <PromptBlock label="Structured Request" text={JSON.stringify(request, null, 2)} />
+          <p className="rounded-md bg-amber-50 px-3 py-2 text-sm text-amber-900">
+            Prompt generation will be connected in the next version.
+          </p>
+        </div>
+      ) : (
+        <div className="rounded-md border border-dashed border-zinc-300 bg-zinc-50 p-4 text-sm leading-6 text-zinc-600">
+          Submit a valid asset request to preview the structured payload for the generation
+          pipeline.
+        </div>
+      )}
     </section>
   );
 }
