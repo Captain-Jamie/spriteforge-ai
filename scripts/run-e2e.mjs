@@ -1,11 +1,12 @@
 import { spawn } from "node:child_process";
 import { setTimeout as delay } from "node:timers/promises";
 
-const port = 3000;
+const port = 3100;
 const baseUrl = `http://localhost:${port}`;
 const testEnv = {
   ...process.env,
-  MOCK_IMAGE_GENERATION: "true"
+  MOCK_IMAGE_GENERATION: "true",
+  PLAYWRIGHT_BASE_URL: baseUrl
 };
 
 const server = spawn(process.execPath, ["node_modules/next/dist/bin/next", "dev", "--port", String(port)], {

@@ -45,10 +45,10 @@ export default function HomePage() {
         body: JSON.stringify(requestWithStyleProfile)
       });
 
-      const payload = await response.json();
+      const payload = await readJsonResponse(response);
 
       if (!response.ok) {
-        throw new Error(payload.error ?? "Failed to generate assets");
+        throw new Error(readErrorMessage(payload, "Failed to generate assets"));
       }
 
       const result = payload as GenerateApiResponse;
@@ -89,4 +89,16 @@ export default function HomePage() {
       </div>
     </main>
   );
+}
+
+async function readJsonResponse(response: Response) {
+  try {
+    return (await response.json()) as Record<string, unknown>;
+  } catch {
+    return {};
+  }
+}
+
+function readErrorMessage(payload: Record<string, unknown>, fallback: string) {
+  return typeof payload.error === "string" && payload.error.trim() ? payload.error : fallback;
 }

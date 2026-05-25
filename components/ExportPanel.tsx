@@ -43,8 +43,8 @@ export function ExportPanel({ assets, selectedAssets, styleProfile }: ExportPane
       });
 
       if (!response.ok) {
-        const payload = await response.json();
-        throw new Error(payload.error ?? "Failed to export package");
+        const payload = await readJsonResponse(response);
+        throw new Error(readErrorMessage(payload, "Failed to export package"));
       }
 
       const blob = await response.blob();
@@ -110,6 +110,18 @@ export function ExportPanel({ assets, selectedAssets, styleProfile }: ExportPane
       </div>
     </section>
   );
+}
+
+async function readJsonResponse(response: Response) {
+  try {
+    return (await response.json()) as Record<string, unknown>;
+  } catch {
+    return {};
+  }
+}
+
+function readErrorMessage(payload: Record<string, unknown>, fallback: string) {
+  return typeof payload.error === "string" && payload.error.trim() ? payload.error : fallback;
 }
 
 function ExportItem({ label }: { label: string }) {

@@ -27,16 +27,16 @@ const basePrompt: PromptBuildResult = {
   appliedStyleProfile: []
 };
 
-const originalEnv = { ...process.env };
-
-afterEach(() => {
-  process.env = { ...originalEnv };
-  vi.unstubAllGlobals();
-});
-
 describe("generateImages", () => {
-  it("uses mock images by default", async () => {
-    delete process.env.MOCK_IMAGE_GENERATION;
+  const originalEnv = { ...process.env };
+
+  afterEach(() => {
+    process.env = { ...originalEnv };
+    vi.unstubAllGlobals();
+  });
+
+  it("uses mock images only when explicitly enabled", async () => {
+    process.env.MOCK_IMAGE_GENERATION = "true";
 
     const result = await generateImages({
       request: baseRequest,
