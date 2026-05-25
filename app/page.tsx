@@ -16,6 +16,7 @@ export default function HomePage() {
     assets,
     clearAssets,
     removeAsset,
+    selectedAssets,
     selectedAssetIds,
     toggleSelectAsset
   } = useAssets();
@@ -71,7 +72,7 @@ export default function HomePage() {
             onToggleSelectAsset={toggleSelectAsset}
             selectedAssetIds={selectedAssetIds}
           />
-          <ExportPanel />
+          <ExportPanel assets={assets} selectedAssets={selectedAssets} />
         </section>
       </div>
     </main>
