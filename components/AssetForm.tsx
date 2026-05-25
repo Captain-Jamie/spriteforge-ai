@@ -1,9 +1,10 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Sparkles } from "lucide-react";
+import { ChevronDown, RotateCcw, Sparkles } from "lucide-react";
+import { useState } from "react";
 import { useForm, type UseFormRegisterReturn } from "react-hook-form";
-import type { GenerateAssetRequest } from "@/lib/asset-schema";
+import type { GenerateAssetRequest, StyleProfile } from "@/lib/asset-schema";
 import { GenerateAssetRequestSchema } from "@/lib/asset-schema";
 import {
   ART_STYLE_LABELS,
@@ -26,11 +27,23 @@ const defaultValues: GenerateAssetRequest = {
 };
 
 type AssetFormProps = {
+  appliedStyleProfile: number;
   isGenerating?: boolean;
+  onResetStyleProfile: () => void;
   onSubmit: (request: GenerateAssetRequest) => void;
+  onUpdateStyleProfileField: (field: keyof StyleProfile, value: string) => void;
+  styleProfile: StyleProfile;
 };
 
-export function AssetForm({ isGenerating = false, onSubmit }: AssetFormProps) {
+export function AssetForm({
+  appliedStyleProfile,
+  isGenerating = false,
+  onResetStyleProfile,
+  onSubmit,
+  onUpdateStyleProfileField,
+  styleProfile
+}: AssetFormProps) {
+  const [isStyleProfileOpen, setIsStyleProfileOpen] = useState(false);
   const {
     formState: { errors },
     handleSubmit,
@@ -42,17 +55,95 @@ export function AssetForm({ isGenerating = false, onSubmit }: AssetFormProps) {
 
   return (
     <section className="overflow-hidden rounded-lg border border-zinc-300 bg-white shadow-sm shadow-zinc-300/80">
-      <div className="flex items-center justify-between gap-3 border-b border-zinc-200 bg-[#f7f7f4] px-4 py-3">
+      <div className="border-b border-zinc-200 bg-[#f7f7f4] px-4 py-3">
         <div>
           <h2 className="text-base font-semibold text-zinc-950">素材需求</h2>
           <p className="mt-0.5 text-xs text-zinc-500">结构化生成参数</p>
         </div>
-        <span className="rounded-md border border-zinc-300 bg-white px-2.5 py-1 text-xs font-medium text-zinc-700">
-          已校验
-        </span>
       </div>
 
       <form className="space-y-3 p-4" onSubmit={handleSubmit(onSubmit)}>
+        <div className="overflow-hidden rounded-md border border-amber-200 bg-amber-50/60">
+          <button
+            className="flex w-full items-center justify-between gap-3 px-3 py-2.5 text-left"
+            onClick={() => setIsStyleProfileOpen((current) => !current)}
+            type="button"
+          >
+            <span>
+              <span className="block text-xs font-semibold text-zinc-800">项目风格约束</span>
+              <span className="mt-0.5 block text-xs text-amber-800">
+                {appliedStyleProfile > 0
+                  ? `${appliedStyleProfile} 条风格规则会注入 Prompt`
+                  : "可选，高级美术一致性设置"}
+              </span>
+            </span>
+            <ChevronDown
+              aria-hidden="true"
+              className={`text-amber-800 transition ${isStyleProfileOpen ? "rotate-180" : ""}`}
+              size={17}
+            />
+          </button>
+          {isStyleProfileOpen ? (
+            <div className="grid gap-3 border-t border-amber-200 bg-white p-3">
+              <div className="flex items-center justify-between gap-3">
+                <p className="text-xs leading-5 text-zinc-600">
+                  基础需求决定生成什么，项目风格约束决定按什么美术规则生成。
+                </p>
+                <button
+                  aria-label="重置风格约束"
+                  className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-zinc-300 bg-white text-zinc-600 hover:bg-zinc-50"
+                  onClick={onResetStyleProfile}
+                  type="button"
+                >
+                  <RotateCcw size={15} aria-hidden="true" />
+                </button>
+              </div>
+              <StyleInput
+                field="projectName"
+                label="项目名称"
+                onUpdateField={onUpdateStyleProfileField}
+                placeholder="Crystal Dungeon"
+                value={styleProfile.projectName}
+              />
+              <StyleInput
+                field="palette"
+                label="配色方案"
+                onUpdateField={onUpdateStyleProfileField}
+                placeholder="cyan, violet, deep navy"
+                value={styleProfile.palette}
+              />
+              <StyleInput
+                field="lineStyle"
+                label="线条风格"
+                onUpdateField={onUpdateStyleProfileField}
+                placeholder="thin bright outline"
+                value={styleProfile.lineStyle}
+              />
+              <StyleInput
+                field="lighting"
+                label="光照规则"
+                onUpdateField={onUpdateStyleProfileField}
+                placeholder="soft rim light"
+                value={styleProfile.lighting}
+              />
+              <StyleInput
+                field="viewRule"
+                label="视角规则"
+                onUpdateField={onUpdateStyleProfileField}
+                placeholder="front-facing sprites"
+                value={styleProfile.viewRule}
+              />
+              <StyleInput
+                field="avoidElements"
+                label="避免元素"
+                onUpdateField={onUpdateStyleProfileField}
+                placeholder="modern weapons, text, watermark"
+                value={styleProfile.avoidElements}
+              />
+            </div>
+          ) : null}
+        </div>
+
         <label className="block">
           <span className="text-xs font-semibold text-zinc-600">素材描述</span>
           <textarea
@@ -148,4 +239,30 @@ function FieldError({ message }: { message?: string }) {
   }
 
   return <p className="mt-1 text-sm text-red-700">{message}</p>;
+}
+
+function StyleInput({
+  field,
+  label,
+  onUpdateField,
+  placeholder,
+  value
+}: {
+  field: keyof StyleProfile;
+  label: string;
+  onUpdateField: (field: keyof StyleProfile, value: string) => void;
+  placeholder: string;
+  value: string;
+}) {
+  return (
+    <label className="block">
+      <span className="text-xs font-semibold text-zinc-600">{label}</span>
+      <input
+        className="mt-1 h-9 w-full rounded-md border border-zinc-300 bg-[#fbfbf8] px-3 text-sm text-zinc-800 outline-none transition focus:border-amber-600 focus:bg-white focus:ring-2 focus:ring-amber-100"
+        onChange={(event) => onUpdateField(field, event.target.value)}
+        placeholder={placeholder}
+        value={value}
+      />
+    </label>
+  );
 }

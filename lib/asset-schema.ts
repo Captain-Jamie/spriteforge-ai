@@ -62,6 +62,13 @@ export const ExportApiRequestSchema = z.object({
   styleProfile: StyleProfileSchema.optional()
 });
 
+export const SpriteSheetRequestSchema = z.object({
+  assets: z.array(AssetRecordSchema).min(2).max(64),
+  columns: z.number().int().min(1).max(16),
+  frameWidth: z.number().int().min(16).max(1024),
+  frameHeight: z.number().int().min(16).max(1024)
+});
+
 export const GeneratedImageSchema = z.object({
   url: z.string().min(1),
   seed: z.string().optional()
@@ -79,6 +86,7 @@ export type PromptBuildResult = z.infer<typeof PromptBuildResultSchema>;
 export type AssetRecord = z.infer<typeof AssetRecordSchema>;
 export type ExportPackage = z.infer<typeof ExportPackageSchema>;
 export type ExportApiRequest = z.infer<typeof ExportApiRequestSchema>;
+export type SpriteSheetRequest = z.infer<typeof SpriteSheetRequestSchema>;
 export type GeneratedImage = z.infer<typeof GeneratedImageSchema>;
 export type GenerateApiResponse = z.infer<typeof GenerateApiResponseSchema>;
 export type AssetType = GenerateAssetRequest["assetType"];

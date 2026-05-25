@@ -13,6 +13,7 @@ SpriteForge AI 是一个面向独立游戏开发者和小型游戏团队的 2D �
 - 透明背景后处理：透明背景素材会调用阿里云视觉智能开放平台通用分割，输出真实 alpha PNG。
 - 本地素材库：支持生成结果持久化、选择、删除、复制 Prompt 和单图下载。
 - ZIP 导出：导出 `assets/`、`metadata.json` 和 `prompts.json`，真实 API 返回的远程图片会在服务端下载后写入 ZIP。
+- Sprite Sheet 导出：将已选素材拼接为透明 PNG 帧表，并导出 `frames.json` 坐标数据。
 - Mock 测试模式：仅在显式开启时用于本地自动化测试，避免消耗真实 API 额度。
 
 ## 原创功能说明
@@ -35,6 +36,7 @@ SpriteForge AI 是一个面向独立游戏开发者和小型游戏团队的 2D �
 - react-hook-form / @hookform/resolvers：表单状态与校验集成。
 - JSZip：ZIP 素材包生成。
 - @alicloud/viapi-utils：将真实生成图片转换为阿里云视觉智能平台可处理的临时文件 URL。
+- sharp：服务端图片缩放、透明画布合成与 Sprite Sheet PNG 生成。
 - lucide-react：界面图标。
 - Vitest：单元测试。
 - Playwright：端到端浏览器测试。
@@ -121,6 +123,7 @@ $env:MOCK_IMAGE_GENERATION='true'; npm run test:e2e
 3. 点击 Generate Assets 调用真实 API 生成素材。
 4. 在 Prompt Preview 中查看实际使用的 Prompt。
 5. 在 Asset Library 中选择、删除或下载素材。
-6. 点击 Export ZIP 导出素材包。
+6. 选择至少 2 个素材后，导出 Sprite Sheet 和 frames JSON。
+7. 点击 Export ZIP 导出素材包。
 
 导出的 ZIP 包包含素材文件、metadata 和 prompts。真实 API 生成的远程图片会被下载并写入 `assets/`，避免导出结果依赖临时图片链接，可用于展示“需求输入 -> Prompt 生成 -> AI 生图 -> 素材管理 -> 交付导出”的完整流程。

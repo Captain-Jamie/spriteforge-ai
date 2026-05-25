@@ -8,14 +8,13 @@ test("generates mock assets and prompt from the request form", async ({ page }) 
   await expect(page.getByRole("heading", { name: "SpriteForge AI" })).toBeVisible();
   await expect(page.getByText("生成或点击素材后")).toBeVisible();
 
-  await page.getByRole("button", { name: /项目风格档案/ }).click();
+  await page.getByRole("button", { name: /项目风格约束/ }).click();
   await page.getByLabel("项目名称").fill("Crystal Dungeon");
   await page.getByLabel("配色方案").fill("cyan, violet, deep navy");
   await page.getByLabel("线条风格").fill("thin bright outline");
   await page.getByLabel("光照规则").fill("soft rim light");
   await page.getByLabel("视角规则").fill("strict front-facing sprites");
   await page.getByLabel("避免元素").fill("modern weapons");
-  await page.getByRole("button", { name: "关闭风格档案" }).click();
 
   await page.getByRole("button", { name: "生成素材" }).click();
 
@@ -48,12 +47,20 @@ test("generates mock assets and prompt from the request form", async ({ page }) 
 
   await page.reload();
 
-  await page.getByRole("button", { name: /项目风格档案/ }).click();
+  await page.getByRole("button", { name: /项目风格约束/ }).click();
   await expect(page.getByLabel("项目名称")).toHaveValue("Crystal Dungeon");
   await expect(page.getByLabel("配色方案")).toHaveValue("cyan, violet, deep navy");
-  await page.getByRole("button", { name: "关闭风格档案" }).click();
   await expect(page.locator("article").filter({ hasText: "fire_slime_monster_1" })).toBeVisible();
   await expect(page.locator("article").filter({ hasText: "fire_slime_monster_2" })).toBeVisible();
+
+  await page.locator("article").filter({ hasText: "fire_slime_monster_1" }).getByRole("button", { name: "选择素材" }).click();
+  await page.locator("article").filter({ hasText: "fire_slime_monster_2" }).getByRole("button", { name: "选择素材" }).click();
+  const spriteSheetDownloadPromise = page.waitForEvent("download");
+  await page.getByRole("button", { name: "导出 Sprite Sheet" }).click();
+  const spriteSheetDownload = await spriteSheetDownloadPromise;
+  expect(spriteSheetDownload.suggestedFilename()).toBe("spriteforge-spritesheet.zip");
+  await page.locator("article").filter({ hasText: "fire_slime_monster_1" }).getByRole("button", { name: "选择素材" }).click();
+  await page.locator("article").filter({ hasText: "fire_slime_monster_2" }).getByRole("button", { name: "选择素材" }).click();
 
   await page.getByLabel("搜索素材").fill("monster_2");
   await expect(page.locator("article").filter({ hasText: "fire_slime_monster_1" })).not.toBeVisible();
@@ -65,6 +72,10 @@ test("generates mock assets and prompt from the request form", async ({ page }) 
   await page.getByRole("button", { name: "角色 2" }).click();
   await expect(page.locator("article").filter({ hasText: "fire_slime_monster_1" })).toBeVisible();
   await expect(page.locator("article").filter({ hasText: "fire_slime_monster_2" })).toBeVisible();
+  await page.getByRole("button", { name: "全选当前展示素材" }).click();
+  await expect(page.getByRole("button", { name: "已选 (2)" })).toBeVisible();
+  await page.getByRole("button", { name: "全选当前展示素材" }).click();
+  await expect(page.getByRole("button", { name: "已选 (0)" })).toBeVisible();
 
   await page.locator("article").filter({ hasText: "fire_slime_monster_2" }).getByRole("button").first().click();
   await expect(
@@ -96,4 +107,10 @@ test("generates mock assets and prompt from the request form", async ({ page }) 
   const download = await downloadPromise;
 
   expect(download.suggestedFilename()).toBe("spriteforge-export.zip");
+
+  await page.getByRole("button", { name: "全选当前展示素材" }).click();
+  await page.getByRole("button", { name: "删除已选素材" }).click();
+  await expect(page.getByRole("heading", { name: "确认删除已选素材" })).toBeVisible();
+  await page.getByRole("button", { name: "确认删除" }).click();
+  await expect(page.getByText("生成素材后，这里会显示可管理和导出的素材卡片。")).toBeVisible();
 });
