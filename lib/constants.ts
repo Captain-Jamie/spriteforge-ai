@@ -61,6 +61,12 @@ export const VIEW_LABELS: Record<(typeof ASSET_VIEWS)[number], string> = {
   isometric: "Isometric"
 };
 
+export const BACKGROUND_LABELS: Record<(typeof BACKGROUND_MODES)[number], string> = {
+  transparent: "Transparent",
+  solid: "Solid Color",
+  scene: "Scene Background"
+};
+
 export const ASSET_TYPE_PROMPT_PARTS: Record<(typeof ASSET_TYPES)[number], string> = {
   character:
     "2D game character asset, full body, centered composition, clean silhouette, readable at small size",
